@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+
+cmake_minimum_required(VERSION 3.13.1)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(NONE)
+
+if (NOT DEFINED FROM_WHO)
+  set(FROM_WHO Zephyr)
+endif()
+
+target_compile_definitions(app PRIVATE "-DMCUBOOT_BLINKY1_FROM=\"${FROM_WHO}\"")
+
+target_sources(app PRIVATE src/test1.c)

@@ -36,6 +36,9 @@ manifest:
     - name: tinycrypt
       path: modules/crypto/tinycrypt
       revision: 3e9a49d2672ec01435ffbf0d788db6d95ef28de0
+    - name: mbedtls
+      revision: aef137b1af8aa7a0f43345c82459254b8832262e
+      path: modules/crypto/mbedtls
     - name: zephyr
       west-commands: scripts/west-commands.yml
       revision: v2.4.0
