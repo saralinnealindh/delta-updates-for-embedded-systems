@@ -44,11 +44,11 @@ flash1:
 flash2: 
 	pyocd flash -e sector -a 0x73000 -t nrf52840 images/signed2.hex
 
-flash-boot:
+flashB:
 	ninja -C $(BOOT_PATH)/build flash
 
-flash-patch:
-	pyocd flash -e sector -a 0xf8000 -t nrf52840 patches/test.patch
+flashP:
+	pyocd flash -e sector -a 0xf8000 -t nrf52840 patches/patch.bin
 
 build-boot:
 	mkdir -p $(BOOT_PATH)/build
@@ -58,4 +58,7 @@ build-boot:
 create-patch:
 	mkdir -p patches
 	rm -f patches/test.patch
-	detools create_patch images/signed1.hex images/signed2.hex patches/test.patch
+	detools create_patch images/signed1.hex images/signed2.hex patches/patch.bin
+	
+connect:
+	JLinkRTTLogger -device NRF52 -if SWD -speed 5000 -rttchannel 0 /dev/stdout
