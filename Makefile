@@ -71,7 +71,7 @@ fb:
 	ninja -C $(BOOT_PATH)/build flash
 
 fp:
-	pyocd flash -e sector -a 0xf8000 -t nrf52840 patches/magic-patch.bin
+	pyocd flash -e sector -a 0xf8000 -t nrf52840 patches/patch.bin
 
 bb:
 	mkdir -p $(BOOT_PATH)/build
@@ -81,8 +81,8 @@ bb:
 cp:
 	mkdir -p patches
 	rm -f patches/patch.bin
-	detools create_patch images/signed1.hex images/signed2.hex patches/patch.bin
-	printf "NEWPATCH" | cat - patches/patch.bin > patches/magic-patch.bin
+	detools create_patch --compression heatshrink images/signed1.hex images/signed2.hex patches/patch.bin
+	python3 pad_patch.py
 	
 c:
 	JLinkRTTLogger -device NRF52 -if SWD -speed 5000 -rttchannel 0 /dev/stdout

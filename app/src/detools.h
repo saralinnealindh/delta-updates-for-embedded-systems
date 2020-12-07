@@ -39,18 +39,6 @@
 #    define DETOOLS_CONFIG_FILE_IO                 1
 #endif
 
-#ifndef DETOOLS_CONFIG_COMPRESSION_NONE
-#    define DETOOLS_CONFIG_COMPRESSION_NONE        1
-#endif
-
-#ifndef DETOOLS_CONFIG_COMPRESSION_LZMA
-#    define DETOOLS_CONFIG_COMPRESSION_LZMA        1
-#endif
-
-#ifndef DETOOLS_CONFIG_COMPRESSION_CRLE
-#    define DETOOLS_CONFIG_COMPRESSION_CRLE        1
-#endif
-
 #ifndef DETOOLS_CONFIG_COMPRESSION_HEATSHRINK
 #    define DETOOLS_CONFIG_COMPRESSION_HEATSHRINK  1
 #endif
@@ -69,8 +57,6 @@
 #define DETOOLS_BAD_PATCH_TYPE                            3
 #define DETOOLS_BAD_COMPRESSION                           4
 #define DETOOLS_INTERNAL_ERROR                            5
-#define DETOOLS_LZMA_INIT                                 6
-#define DETOOLS_LZMA_DECODE                               7
 #define DETOOLS_OUT_OF_MEMORY                             8
 #define DETOOLS_CORRUPT_PATCH                             9
 #define DETOOLS_IO_FAILED                                10
@@ -89,7 +75,6 @@
 #define DETOOLS_STEP_GET_FAILED                          23
 #define DETOOLS_ALREADY_FAILED                           24
 #define DETOOLS_CORRUPT_PATCH_OVERFLOW                   25
-#define DETOOLS_CORRUPT_PATCH_CRLE_KIND                  26
 #define DETOOLS_HEATSHRINK_HEADER                        27
 
 /**
@@ -208,27 +193,9 @@ typedef int (*detools_step_set_t)(void *arg_p, int step);
  */
 typedef int (*detools_step_get_t)(void *arg_p, int *step_p);
 
-struct detools_apply_patch_patch_reader_none_t {
-    size_t patch_size;
-    size_t patch_offset;
-};
-
-#if DETOOLS_CONFIG_COMPRESSION_LZMA == 1
-
-#include <lzma.h>
-
-struct detools_apply_patch_patch_reader_lzma_t {
-    lzma_stream stream;
-    uint8_t *input_p;
-    uint8_t *output_p;
-    size_t output_size;
-};
-
-#endif
-
 #if DETOOLS_CONFIG_COMPRESSION_HEATSHRINK == 1
 
-#include "heatshrink_decoder.h"
+#include "heatshrink/heatshrink_decoder.h"
 
 struct detools_apply_patch_patch_reader_heatshrink_t {
     int8_t window_sz2;
@@ -282,18 +249,7 @@ struct detools_apply_patch_patch_reader_t {
         bool is_signed;
     } size;
     union {
-#if DETOOLS_CONFIG_COMPRESSION_NONE == 1
-        struct detools_apply_patch_patch_reader_none_t none;
-#endif
-#if DETOOLS_CONFIG_COMPRESSION_LZMA == 1
-        struct detools_apply_patch_patch_reader_lzma_t lzma;
-#endif
-#if DETOOLS_CONFIG_COMPRESSION_CRLE == 1
-        struct detools_apply_patch_patch_reader_crle_t crle;
-#endif
-#if DETOOLS_CONFIG_COMPRESSION_HEATSHRINK == 1
         struct detools_apply_patch_patch_reader_heatshrink_t heatshrink;
-#endif
     } compression;
     int (*destroy)(struct detools_apply_patch_patch_reader_t *self_p);
     int (*decompress)(struct detools_apply_patch_patch_reader_t *self_p,

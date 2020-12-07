@@ -10,4 +10,4 @@ endif()
 
 target_compile_definitions(app PRIVATE "-DMCUBOOT_BLINKY2_FROM=\"${FROM_WHO}\"")
 
-target_sources(app PRIVATE src/test2.c)
+target_sources(app PRIVATE src/main.c)
