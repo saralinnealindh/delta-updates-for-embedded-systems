@@ -1,1 +1,1 @@
-obj-y = test2.o
+obj-y = main.o

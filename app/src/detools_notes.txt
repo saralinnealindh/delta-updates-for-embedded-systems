@@ -1,0 +1,66 @@
+step 1: detools_apply_patch_filenames
+input: const file names (from, patch, to).
+uses: main function
+
+step 2: file_io_init
+input: file struct, all files, pointer to patch size.
+uses: open files and find sizes.
+
+step 3: detools_apply_patch_callbacks
+input: functions (from_read, from_seek, patch_read, 
+        patch_size, to_write, file_io(struct))
+        or (detools_read_t, detools_seek_t, detools_read_t, size_t,to_write, arg_p)
+        
+        these above types are callback functions that provides the data for the the reader
+        or the writer and the current position.
+
+What does detools_read_t do????
+it has user data????? 
+it has a buffer (to read into) and a size (i.e. number of bytes to read)
+
+what does detools_seek_t do????
+What does detools_write_t do???
+What does size_t do??? 
+
+TODO: implementera följande funktioner för device: 
+
+samt gör ngn form av callback implementation
+
+static int flash_read(void *arg_p, uint8_t *buf_p, size_t size)
+{
+    int res;
+
+    struct device *flash; 
+    flash = (struct device *)arg_p; 
+
+    res = 0;
+
+    if (size > 0) {
+        if (fread(buf_p, size, 1, file_p) != 1) {
+            res = -DETOOLS_FILE_READ_FAILED;
+        }
+    }
+
+    return (res);
+}
+
+static int flash_write(void *arg_p, const uint8_t *buf_p, size_t size)
+{
+    int res;
+
+    struct device *flash; 
+    flash = (struct device *)arg_p; 
+
+    res = 0;
+
+    if (size > 0) {
+        if (fwrite(buf_p, size, 1, self_p->fto_p) != 1) {
+            res = -DETOOLS_FILE_WRITE_FAILED;
+        }
+    }
+
+    return (res);
+}
+
+
+
