@@ -35,10 +35,6 @@
  * Define any of the defines below to 0 to disable given feature.
  */
 
-#ifndef DETOOLS_CONFIG_FILE_IO
-#    define DETOOLS_CONFIG_FILE_IO                 1
-#endif
-
 #ifndef DETOOLS_CONFIG_COMPRESSION_HEATSHRINK
 #    define DETOOLS_CONFIG_COMPRESSION_HEATSHRINK  1
 #endif
@@ -61,12 +57,6 @@
 #define DETOOLS_CORRUPT_PATCH                             9
 #define DETOOLS_IO_FAILED                                10
 #define DETOOLS_ALREADY_DONE                             11
-#define DETOOLS_FILE_OPEN_FAILED                         12
-#define DETOOLS_FILE_CLOSE_FAILED                        13
-#define DETOOLS_FILE_READ_FAILED                         14
-#define DETOOLS_FILE_WRITE_FAILED                        15
-#define DETOOLS_FILE_SEEK_FAILED                         16
-#define DETOOLS_FILE_TELL_FAILED                         17
 #define DETOOLS_SHORT_HEADER                             18
 #define DETOOLS_NOT_ENOUGH_PATCH_DATA                    19
 #define DETOOLS_HEATSHRINK_SINK                          20
@@ -195,7 +185,7 @@ typedef int (*detools_step_get_t)(void *arg_p, int *step_p);
 
 #if DETOOLS_CONFIG_COMPRESSION_HEATSHRINK == 1
 
-#include "heatshrink/heatshrink_decoder.h"
+#include "../heatshrink/heatshrink_decoder.h"
 
 struct detools_apply_patch_patch_reader_heatshrink_t {
     int8_t window_sz2;
@@ -410,24 +400,6 @@ int detools_apply_patch_callbacks(detools_read_t from_read,
                                   size_t patch_size,
                                   detools_write_t to_write,
                                   void *arg_p);
-
-#if DETOOLS_CONFIG_FILE_IO == 1
-
-/**
- * Apply given patch file to given from file and write the output to
- * given to file.
- *
- * @param[in] from_p Source file name.
- * @param[in] patch_p Patch file name.
- * @param[in] to_p Destination file name.
- *
- * @return Size of to-data in bytes or negative error code.
- */
-int detools_apply_patch_filenames(const char *from_p,
-                                  const char *patch_p,
-                                  const char *to_p);
-
-#endif
 
 /**
  * Get the error string for given error code.

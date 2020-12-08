@@ -16,11 +16,12 @@
 #include <stdio.h>
 #include "detools/detools.h"
 
+
 /* 1000 msec = 1 sec */
 #define SLEEP_TIME_MS   1000
 
 /* The devicetree node identifier for the "led0" alias. */
-#define LED0_NODE DT_ALIAS(led1)
+#define LED0_NODE DT_ALIAS(led0)
 
 #if DT_NODE_HAS_STATUS(LED0_NODE, okay)
 #define LED0	DT_GPIO_LABEL(LED0_NODE, gpios)
@@ -63,7 +64,7 @@
 #define STORAGE_SIZE FLASH_AREA_SIZE(storage)
 
 // HEADER SIZE
-#define HEADER_SIZE 0x18
+#define HEADER_SIZE 24
 
 static struct gpio_callback button_cb_data;
 static bool btn_flag;
@@ -84,29 +85,37 @@ struct flash_mem {
 void button_pressed(const struct device *dev, 
 					struct gpio_callback *cb,
 		    		uint32_t pins);
+
 static int configure_devices(const struct device *flash, 
 					const struct device *button, 
 					const struct device *led);
+
 int test_callbacks(detools_read_t from_read,
 					detools_seek_t from_seek,
 					detools_read_t patch_read,
 					size_t patch_size,
 					detools_write_t to_write,
 					void *arg_p);
+
 static int du_flash_write(void *arg_p,
 					const uint8_t *buf_p,
 					size_t size);
 
 static int du_flash_from_read(void *arg_p,
-					uint8_t *buf_p,
+					const uint8_t *buf_p,
 					size_t size);
+
 static int du_flash_patch_read(void *arg_p,
-					uint8_t *buf_p,
+					const uint8_t *buf_p,
 					size_t size);
+
 static int du_flash_seek(void *arg_p,
 					int offset);
+
 static int erase_secondary(const struct device *flash);
+
 static int init_flash_mem(struct flash_mem *flash);
+
 static int read_patch_header(struct flash_mem *flash);
 
 /* MAIN FUNCTION */
@@ -160,15 +169,12 @@ void main(void)
 
 		if(btn_flag)
 		{
-			ret = flash_read(flash_pt->device,SECONDARY_OFFSET,buf,length);
+			ret = flash_read(flash_pt->device,SECONDARY_OFFSET, buf,length);
 
 			if(ret)
 				return;
 
 			patch_size = read_patch_header(flash_pt);
-
-			printk("Size: %X\n",patch_size);
-			printk("Flash location: %d\n",flash_pt->device);
 
 			if(patch_size>0) //if patch exists
 			{
@@ -176,12 +182,15 @@ void main(void)
 				ret = detools_apply_patch_callbacks(du_flash_from_read,
 											du_flash_seek,
 											du_flash_patch_read,
-											(size_t) patch_size,
+											patch_size,
 											du_flash_write,
 											flash_pt);
 				if(ret<=0)
-					printk("Error: %d \n",ret);
+					printk("Error: %x \n",ret);
 			}
+
+			printk("Size: %X\n",patch_size);
+			printk("Word: %s\n",buf);
 
 			btn_flag = false;
 		}
@@ -244,20 +253,19 @@ static int du_flash_write(void *arg_p,
 					const uint8_t *buf_p,
 					size_t size)
 {
-	//printk("START WRITING\n");
 	struct flash_mem *flash; 
     flash = (struct flash_mem *)arg_p;
 
 	if(!flash)
 		return 0x18;//couldnt convert to flash_mem
 
-	/*if (flash->to_current%4) 
-		return 0x12; //if word not aligned*/
+	if (size%4) 
+		return 0x12; //if word not aligned
 
 	if (flash_write_protection_set(flash->device, false)) 
 		return 0x13; //write protection could not be removed
 
-	if (flash_write(flash->device, flash->to_current,buf_p, size)) 
+	if (flash_write(flash->device, flash->to_current, buf_p, size)) 
 		return 0x14; //writing could not be done
 
 	if (flash_write_protection_set(flash->device, true))
@@ -268,19 +276,16 @@ static int du_flash_write(void *arg_p,
 	if (flash->to_current>=flash->to_end)
 		return 0x1; //out of memory
 
-	//printk("STOP WRITING\n");
-
 	return 0;
 
 }
 
 static int du_flash_from_read(void *arg_p,
-					uint8_t *buf_p,
+					const uint8_t *buf_p,
 					size_t size)
 {
-	//printk("START FROM READ\n");
 	struct flash_mem *flash; 
-    flash = (struct flash_mem *)arg_p;
+    flash = (struct flash_mem *)arg_p; 
 
 	if(!flash)
 		return 0x28; //couldnt convert to flash_mem
@@ -296,22 +301,20 @@ static int du_flash_from_read(void *arg_p,
 	if (flash->from_current>=flash->from_end)
 		return 0x21; //out of memory
 
-	//printk("STOP FROM READ\n");
-
 	return 0;
 }
 
 static int du_flash_patch_read(void *arg_p,
-					uint8_t *buf_p,
+					const uint8_t *buf_p,
 					size_t size)
 {
 	struct flash_mem *flash; 
-    flash = (struct flash_mem *)arg_p;
+    flash = (struct flash_mem *)arg_p; 
 
-	if(!flash)
+	if(!flash) 
 		return 0x38; //couldnt convert to flash_mem
 
-	if (size <= 0)
+	if (size <= 0) 
 		return 0x36; //invalid buff size
 
 	if (flash_read(flash->device,flash->patch_current,buf_p,size))
@@ -321,15 +324,12 @@ static int du_flash_patch_read(void *arg_p,
 
 	if (flash->patch_current>=flash->patch_end)
 		return 0x31; //out of memory
-
-	//printk("STOP PATCH READ\n");
 	
 	return 0;
 }
 
 static int du_flash_seek(void *arg_p,int offset)
 {
-	//printk("START SEEK\n");
 	struct flash_mem *flash;
     flash = (struct flash_mem *)arg_p;
 
@@ -340,8 +340,6 @@ static int du_flash_seek(void *arg_p,int offset)
 
 	if (flash->from_current>=flash->from_end)
 		return 0x41; //out of memory
-
-	//printk("STOP SEEK\n");
 
 	return 0;
 
@@ -358,7 +356,8 @@ static int init_flash_mem(struct flash_mem *flash)
 	flash->to_current = SECONDARY_OFFSET;
 	flash->to_end = flash->to_current + SECONDARY_SIZE;
 
-	flash->patch_current = STORAGE_OFFSET + HEADER_SIZE;
+	flash->patch_current = STORAGE_OFFSET;
+	//flash->patch_current = STORAGE_OFFSET +0x8;
 	flash->patch_end = flash->patch_current + STORAGE_SIZE;
 
 	return 0;
@@ -381,7 +380,7 @@ static int erase_secondary(const struct device *flash)
 static int read_patch_header(struct flash_mem *flash)
 {
 	int header_len, word_len, size;
-	word_len = 0x8;
+	word_len = 8;
 	header_len = HEADER_SIZE;
 	unsigned char *buf_p,*buf_end,buf[header_len];
 	unsigned char word_buf[] = {'N','E','W','P','A','T','C','H'};
@@ -390,7 +389,7 @@ static int read_patch_header(struct flash_mem *flash)
 	if(flash_read(flash->device,STORAGE_OFFSET,buf,header_len))
 		return -0x7; //could not read flash
 
-	if(strncmp(buf,word_buf,word_len))
+	if(!strncmp(buf,word_buf,word_len))
 		return -1; //no new patch
 	
 	buf_p=&buf[word_len];
@@ -398,14 +397,14 @@ static int read_patch_header(struct flash_mem *flash)
 
 	size = (int) strtol(buf_p,buf_end,header_len-word_len);
 
-	/*if (flash_write_protection_set(flash->device, false)) 
+	if (flash_write_protection_set(flash->device, false)) 
 		return -0x3; //write protection could not be removed
 
 	if (flash_write(flash->device, STORAGE_OFFSET,new_word, word_len)) 
 		return -0x4; //writing could not be done
 
 	if (flash_write_protection_set(flash->device, true))
-		return -0x5; //writing protection could not be set again*/
+		return -0x5; //writing protection could not be set again
 
 	return size;
 }

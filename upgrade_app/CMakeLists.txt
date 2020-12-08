@@ -8,6 +8,10 @@ if (NOT DEFINED FROM_WHO)
   set(FROM_WHO Zephyr)
 endif()
 
-target_compile_definitions(app PRIVATE "-DMCUBOOT_BLINKY1_FROM=\"${FROM_WHO}\"")
+target_compile_definitions(app PRIVATE "-DMCUBOOT_BLINKY2_FROM=\"${FROM_WHO}\"")
 
-target_sources(app PRIVATE src/test1.c)
+target_sources(app 
+  PRIVATE 
+    src/main.c
+    src/detools/detools.c
+    src/heatshrink/heatshrink_decoder.c)

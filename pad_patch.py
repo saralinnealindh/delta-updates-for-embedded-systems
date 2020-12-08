@@ -6,6 +6,8 @@ def padded_hex(s,p):
 path='patches/patch.bin'
 size=os.stat(path).st_size 
 f=open(path,'r+b')
+contents = f.read()
 f.seek(0)
 padding = 'NEWPATCH' + padded_hex(hex(size),14)
 f.write(padding.encode())
+f.write(contents)
