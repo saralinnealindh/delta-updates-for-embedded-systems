@@ -410,6 +410,9 @@ static int process_init(struct detools_apply_patch_t *self_p)
     patch_type = ((byte >> 4) & 0x7);
     self_p->compression = (byte & 0xf);
 
+    printk("the byte %X -> into %x/n",byte,patch_type);
+    printk("offset: %X \n",self_p->chunk.offset);
+
     if (patch_type != PATCH_TYPE_SEQUENTIAL) {
         return (-DETOOLS_BAD_PATCH_TYPE);
     }
@@ -515,6 +518,7 @@ static int process_data(struct detools_apply_patch_t *self_p,
         res = self_p->from_read(self_p->arg_p, &from[0], to_size);
 
         if (res != 0) {
+            printk("number 1");
             return (-DETOOLS_IO_FAILED);
         }
 
@@ -531,6 +535,7 @@ static int process_data(struct detools_apply_patch_t *self_p,
     res = self_p->to_write(self_p->arg_p, &to[0], to_size);
 
     if (res != 0) {
+        printk("the error is: %d", res);
         return (-DETOOLS_IO_FAILED);
     }
 
@@ -571,6 +576,7 @@ static int process_adjustment(struct detools_apply_patch_t *self_p)
     res = self_p->from_seek(self_p->arg_p, offset);
 
     if (res != 0) {
+        printk("number 3");
         return (-DETOOLS_IO_FAILED);
     }
 
@@ -695,6 +701,7 @@ int detools_apply_patch_dump(struct detools_apply_patch_t *self_p,
     res = state_write(self_p->arg_p, self_p, sizeof(*self_p));
 
     if (res != 0) {
+        printk("number 4");
         return (-DETOOLS_IO_FAILED);
     }
 
@@ -716,6 +723,7 @@ int detools_apply_patch_restore(struct detools_apply_patch_t *self_p,
     res = state_read(self_p->arg_p, &dumped, sizeof(dumped));
 
     if (res != 0) {
+        printk("number 5");
         return (-DETOOLS_IO_FAILED);
     }
 
@@ -736,6 +744,7 @@ int detools_apply_patch_restore(struct detools_apply_patch_t *self_p,
     res = self_p->from_seek(self_p->arg_p, self_p->from_offset);
 
     if (res != 0) {
+        printk("number 6");
         return (-DETOOLS_IO_FAILED);
     }
 
@@ -822,6 +831,7 @@ static int callbacks_process(struct detools_apply_patch_t *apply_patch_p,
                                               chunk_size);
             patch_offset += chunk_size;
         } else {
+            printk("number 7");
             res = -DETOOLS_IO_FAILED;
         }
     }

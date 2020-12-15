@@ -20,7 +20,8 @@ help:
 	@echo "fp	flash the patch to the storage partition"
 	@echo "cp	create a patch based on the firmware image and the upgraded firmware image and"
 	@echo "		append NEWPATCH to the beginning of it"
-	@echo "c	connect to the device terminal"		
+	@echo "c	connect to the device terminal"
+	@echo "pfc	print flash content to file"				
 
 1: b1 f1
 
@@ -47,7 +48,7 @@ b1:
 	
 b2:
 	mkdir -p zephyr/build 
-	mkdir -p imagesg
+	mkdir -p images
 	west build -p auto -b $(BOARD) -d zephyr/build upgrade_app
 	west sign \
 		-t imgtool \
@@ -86,3 +87,15 @@ cp:
 	
 c:
 	JLinkRTTLogger -device NRF52 -if SWD -speed 5000 -rttchannel 0 /dev/stdout
+
+pfc: ps pp
+
+ps:
+	rm -f flash.bin
+	touch flash.bin
+	python3 jflashrw.py read --start 0x73000 --length 0x67000 --file flash.bin 
+
+pp: 
+	rm -f flash2.bin
+	touch flash2.bin
+	python3 jflashrw.py read --start 0xc000 --length 0x67000 --file flash2.bin
