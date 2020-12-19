@@ -1,3 +1,6 @@
+#ifndef MAIN_H
+#define MAIN_H
+
 #include <zephyr.h>
 #include <sys/printk.h>
 #include <sys/util.h>
@@ -8,27 +11,37 @@
 #include <inttypes.h>
 #include <storage/flash_map.h>
 #include <stdio.h>
+#include <dfu/mcuboot.h>
+#include <power/reboot.h>
 #include "detools/detools.h"
 
-//DEFINE LED BLINKING SPEED 
-#define SLEEP_TIME_MS   1000
+/* IMAGE OFFSETS AND SIZES */
+#define PRIMARY_OFFSET FLASH_AREA_OFFSET(image_0)
+#define PRIMARY_SIZE FLASH_AREA_SIZE(image_0)
+#define SECONDARY_OFFSET FLASH_AREA_OFFSET(image_1)
+#define SECONDARY_SIZE FLASH_AREA_SIZE(image_1)
+#define STORAGE_OFFSET FLASH_AREA_OFFSET(storage)
+#define STORAGE_SIZE FLASH_AREA_SIZE(storage)
 
-//CONFIG LED 
-#define LED0_NODE DT_ALIAS(led0)
+/* PATCH HEADER SIZE */
+#define HEADER_SIZE 0x18
 
-#if DT_NODE_HAS_STATUS(LED0_NODE, okay)
-#define LED0	DT_GPIO_LABEL(LED0_NODE, gpios)
-#define PIN	DT_GPIO_PIN(LED0_NODE, gpios)
-#define FLAGS	DT_GPIO_FLAGS(LED0_NODE, gpios)
-#else
-/* A build error here means your board isn't set up to blink an LED. */
-#error "Unsupported board: led0 devicetree alias is not defined"
-#define LED0	""
-#define PIN	0
-#define FLAGS	0
-#endif
+/* FLASH MEMORY AND POINTERS TO CURRENT LOCATION OF BUFFERS AND END OF IMAGE AREAS.
+ * - "Patch" refers to the area containing the patch image. 
+ * - "From" refers to the area containing the source image. 
+ * - "To" refers to the area where the target image is to be placed.
+ * */
+struct flash_mem {
+	const struct device *device;
+	off_t patch_current; 
+	off_t patch_end; 
+	off_t from_current; 
+	off_t from_end; 
+	off_t to_current; 
+	off_t to_end; 
+};
 
-//CONFIG BUTTON
+/* BUTTON */
 #define SW0_NODE	DT_ALIAS(sw0)
 
 #if DT_NODE_HAS_STATUS(SW0_NODE, okay)
@@ -45,34 +58,23 @@
 static struct gpio_callback button_cb_data;
 static bool btn_flag;
 
-// IMAGE OFFSETS
-#define PRIMARY_OFFSET FLASH_AREA_OFFSET(image_0)
-#define PRIMARY_SIZE FLASH_AREA_SIZE(image_0)
-#define SECONDARY_OFFSET FLASH_AREA_OFFSET(image_1)
-#define SECONDARY_SIZE FLASH_AREA_SIZE(image_1)
-#define STORAGE_OFFSET FLASH_AREA_OFFSET(storage)
-#define STORAGE_SIZE FLASH_AREA_SIZE(storage)
+/* LED */
+#define SLEEP_TIME_MS   1000 //BLINKING SPEED
 
-// PATCH HEADER SIZE
-#define HEADER_SIZE 0x18
-
-// FLASH MEMORY AND POINTERS TO CURRENT LOCATION OF BUFFER AND END OF IMAGE AREA 
-struct flash_mem {
-	const struct device *device;
-	off_t patch_current; //current patch offset
-	off_t patch_end; //end of patch partition
-	off_t from_current; //current from file offset
-	off_t from_end; //end of primary partition
-	off_t to_current; //current from file offset
-	off_t to_end; //end of primary partition
-};
+#define LED0_NODE DT_ALIAS(led0)
+#if DT_NODE_HAS_STATUS(LED0_NODE, okay)
+#define LED0	DT_GPIO_LABEL(LED0_NODE, gpios)
+#define PIN	DT_GPIO_PIN(LED0_NODE, gpios)
+#define FLAGS	DT_GPIO_FLAGS(LED0_NODE, gpios)
+#else
+/* A build error here means your board isn't set up to blink an LED. */
+#error "Unsupported board: led0 devicetree alias is not defined"
+#define LED0	""
+#define PIN	0
+#define FLAGS	0
+#endif
 
 /* FUNCTION DECLARATIONS */
-
-//Responds to button 1 being pressed 
-void button_pressed(const struct device *dev, 
-					struct gpio_callback *cb,
-		    		uint32_t pins);
 
 /**
  * Functiong for initiating the devices used by the 
@@ -167,3 +169,10 @@ static int init_flash_mem(struct flash_mem *flash);
  * @return zero(0) or error code.
  */
 static int read_patch_header(struct flash_mem *flash);
+
+//Responds to button 1 being pressed 
+void button_pressed(const struct device *dev, 
+					struct gpio_callback *cb,
+		    		uint32_t pins);
+
+#endif

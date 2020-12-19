@@ -22,7 +22,7 @@ void main(void)
 	if (!led||!button||!flash_pt->device)
 		return;
 
-	if (configure_devices(flash_pt->device,button,led))
+	if (config_devices(flash_pt->device,button,led))
 		return;
 
 	if(init_flash_mem(flash_pt))
@@ -30,7 +30,7 @@ void main(void)
 	
 	printk("Hello World from %s on %s!\n",MCUBOOT_BLINKY2_FROM, CONFIG_BOARD);
 
-	ret = erase_secondary(flash_pt->device);
+	ret = clear_slot1(flash_pt->device);
 
 	if (ret) 
 		printk("Something went wrong :( %X \n",ret);
@@ -64,6 +64,11 @@ void main(void)
 											flash_pt);
 				if(ret<=0)
 					printk("Error: %d \n",ret);
+				
+				if(boot_request_upgrade(BOOT_UPGRADE_PERMANENT))
+					return;
+				
+				sys_reboot(SYS_REBOOT_COLD);
 			}
 
 			btn_flag = false;
@@ -185,16 +190,14 @@ static int read_patch_header(struct flash_mem *flash)
 
 	size = (int) strtol(buf_p,buf_end,header_len-word_len);
 
-	//BELOW IS CODE USED TO MARK PATCH AS APPLIED. DURING TESING NOT USED. 
-
-	/*if (flash_write_protection_set(flash->device, false)) 
+	if (flash_write_protection_set(flash->device, false)) 
 		return -0x3; //write protection could not be removed
 
 	if (flash_write(flash->device, STORAGE_OFFSET,new_word, word_len)) 
 		return -0x4; //writing could not be done
 
 	if (flash_write_protection_set(flash->device, true))
-		return -0x5; //writing protection could not be set again*/
+		return -0x5; //writing protection could not be set again
 
 	return size;
 }
@@ -216,7 +219,7 @@ static int init_flash_mem(struct flash_mem *flash)
 	return 0;
 }
 
-static int configure_devices(const struct device *flash, const struct device *button, const struct device *led)
+static int config_devices(const struct device *flash, const struct device *button, const struct device *led)
 {
 	int ret; 
 	ret = gpio_pin_configure(led, PIN, GPIO_OUTPUT_ACTIVE | FLAGS);
@@ -225,9 +228,7 @@ static int configure_devices(const struct device *flash, const struct device *bu
 	if (ret)
 		return -1;
 
-	ret = gpio_pin_interrupt_configure(button,SW0_GPIO_PIN,GPIO_INT_EDGE_TO_ACTIVE);
-
-	if (ret)
+	if (gpio_pin_interrupt_configure(button,SW0_GPIO_PIN,GPIO_INT_EDGE_TO_ACTIVE))
 		return -1;
 	
 	gpio_init_callback(&button_cb_data, button_pressed, BIT(SW0_GPIO_PIN));
@@ -236,7 +237,7 @@ static int configure_devices(const struct device *flash, const struct device *bu
 	return 0; 
 }
 
-static int erase_secondary(const struct device *flash) 
+static int clear_slot1(const struct device *flash) 
 {
 	if (flash_write_protection_set(flash, false)) 
 		return 0x53; //write protection could not be removed
@@ -256,3 +257,7 @@ void button_pressed(const struct device *dev, struct gpio_callback *cb,
 	printk("Button pressed at %" PRIu32 "\n", k_cycle_get_32());
 	btn_flag = true;
 }
+
+
+
+

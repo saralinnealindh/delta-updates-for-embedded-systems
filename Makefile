@@ -25,7 +25,7 @@ help:
 
 1: b1 f1
 
-2: b2 f2
+2: b2b f2
 
 b: bb fb
 
@@ -38,7 +38,7 @@ b1:
 	west sign \
 		-t imgtool \
 		-d zephyr/build/ \
-		-H images/signed1.hex \
+		-B images/signed1.bin \
 		--  \
 		--version 1.0 \
 		--header-size 512 \
@@ -46,14 +46,14 @@ b1:
 		--align 4 \
 		--key bootloader/mcuboot/root-rsa-2048.pem 
 	
-b2:
+b2b:
 	mkdir -p zephyr/build 
 	mkdir -p images
 	west build -p auto -b $(BOARD) -d zephyr/build upgrade_app
 	west sign \
 		-t imgtool \
 		-d zephyr/build/ \
-		-H images/signed2.hex \
+		-B images/signed3.bin \
 		-- \
 		--version 1.0 \
 		--header-size 512 \
@@ -61,12 +61,27 @@ b2:
 		--slot-size 0x67000 \
 		--pad \
 		--key bootloader/mcuboot/root-rsa-2048.pem 
+
+b2:
+	mkdir -p zephyr/build 
+	mkdir -p images
+	west build -p auto -b $(BOARD) -d zephyr/build upgrade_app
+	west sign \
+		-t imgtool \
+		-d zephyr/build/ \
+		-B images/signed2.bin \
+		-- \
+		--version 1.0 \
+		--header-size 512 \
+		--align 4 \
+		--slot-size 0x67000 \
+		--key bootloader/mcuboot/root-rsa-2048.pem 
 	
 f1: 
-	pyocd flash -e sector -a 0x0c000 -t nrf52840 images/signed1.hex
+	pyocd flash -e sector -a 0x0c000 -t nrf52840 images/signed1.bin
 	
 f2: 
-	pyocd flash -e sector -a 0x73000 -t nrf52840 images/signed2.hex
+	pyocd flash -e sector -a 0x73000 -t nrf52840 images/signed3.bin
 
 fb:
 	ninja -C $(BOOT_PATH)/build flash
@@ -82,8 +97,8 @@ bb:
 cp:
 	mkdir -p patches
 	rm -f patches/patch.bin
-	detools create_patch --compression heatshrink images/signed1.hex images/signed2.hex patches/patch.bin
-	python3 pad_patch.py
+	detools create_patch --compression heatshrink images/signed1.bin images/signed2.bin patches/patch.bin
+	python3 pad_patch.py patch
 	
 c:
 	JLinkRTTLogger -device NRF52 -if SWD -speed 5000 -rttchannel 0 /dev/stdout
