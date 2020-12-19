@@ -14,6 +14,7 @@ target_sources(app
   PRIVATE 
     src/main.c
     src/detools/detools.c
-    src/heatshrink/heatshrink_decoder.c)
+    src/heatshrink/heatshrink_decoder.c
+    src/delta/delta.c)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
