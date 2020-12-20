@@ -1,5 +1,9 @@
 #include "delta.h"
 
+/* 
+*  IMAGE/FLASH MANAGEMENT
+*/
+
 static int delta_flash_write(void *arg_p,
 					const uint8_t *buf_p,
 					size_t size)
@@ -81,7 +85,7 @@ static int delta_flash_seek(void *arg_p,int offset)
     flash = (struct flash_mem *)arg_p;
 
 	if(!flash)
-		return -DELTA_CASTING_ERROR; //couldnt convert to flash_mem
+		return -DELTA_CASTING_ERROR; 
 
 	flash->from_current += offset;
 
@@ -90,6 +94,10 @@ static int delta_flash_seek(void *arg_p,int offset)
 
 	return DELTA_OK;
 }
+
+/* 
+*  INIT
+*/
 
 static int delta_init_flash_mem(struct flash_mem *flash)
 {
@@ -108,13 +116,6 @@ static int delta_init_flash_mem(struct flash_mem *flash)
 	return DELTA_OK;
 }
 
-/**
- * Function for erasing data on the entire secondary partiton.
- *
- * @param[in] flash the devices flash memory. 
- *
- * @return zero(0) or error code.
- */
 static int delta_clear_slot1(const struct device *flash) 
 {
 	if (flash_write_protection_set(flash, false)) 
@@ -145,6 +146,10 @@ static int delta_init(struct flash_mem *flash)
 
     return DELTA_OK;
 }
+
+/*
+*  PUBLIC FUNCTIONS 
+*/
 
 int delta_check_and_apply(struct flash_mem *flash)
 {

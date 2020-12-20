@@ -37,6 +37,12 @@ static bool btn_flag;
 #define FLAGS	0
 #endif
 
+/* Debug printouts (adds about 800 B to img) 
+ * Define to 0 to disable */
+#ifndef PRINT_ERRORS
+#define PRINT_ERRORS 1
+#endif
+
 //Initiating button and led
 static int config_devices(const struct device *button, 
 					const struct device *led);
@@ -78,7 +84,9 @@ void main(void)
 			ret = delta_check_and_apply(flash_pt);
 
 			if(ret){
+				#if PRINT_ERRORS == 1
 				printk("%s",delta_error_as_string(ret));
+				#endif
 				return;
 			}
 				
