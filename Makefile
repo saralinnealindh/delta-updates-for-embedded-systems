@@ -23,9 +23,8 @@ PYFLASH := pyocd flash -e sector
 DETOOLS := detools create_patch --compression heatshrink
 BUILD_APP := west build -p auto -b $(BOARD) -d $(BUILD_DIR)
 SIGN := west sign -t imgtool -d $(BUILD_DIR)
-IMGTOOL_SETTINGS :=	--version 1.0 --header-size 512 \
-					--slot-size 0x67000 --align 4 \
-					--key $(KEY_PATH)
+IMGTOOL_SETTINGS := --version 1.0 --header-size 512 --slot-size 0x67000 \
+                    --align 4 --key $(KEY_PATH)
 PAD_SCRIPT := $(PY) scripts/pad_patch.py
 DUMP_SCRIPT := $(PY) scripts/jflashrw.py read
 
