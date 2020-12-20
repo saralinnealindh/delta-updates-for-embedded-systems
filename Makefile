@@ -14,7 +14,7 @@ BUILD_DIR := zephyr/build #zephyr build directory
 KEY_PATH := bootloader/mcuboot/root-rsa-2048.pem #key for signing images
 
 #Names of generated folders and files (can be changed to whatever)
-BIN_DIR := binaries 
+BIN_DIR := binaries
 IMG_DIR := $(BIN_DIR)/signed_images
 PATCH_DIR := $(BIN_DIR)/patches
 DUMP_DIR := $(BIN_DIR)/flash_dumps
@@ -25,7 +25,7 @@ PATCH_PATH := $(PATCH_DIR)/patch.bin
 SLOT0_PATH := $(DUMP_DIR)/slot0.bin
 SLOT1_PATH := $(DUMP_DIR)/slot1.bin
 
-#commands and flags
+#commands + flags and scripts
 PYFLASH := pyocd flash -e sector 
 DETOOLS := detools create_patch --compression heatshrink
 BUILD_APP := west build -p auto -b $(BOARD) -d $(BUILD_DIR)
@@ -34,6 +34,7 @@ IMGTOOL_SETTINGS := --version 1.0 --header-size $(HEADER_SIZE) \
                     --slot-size $(SLOT_SIZE) --align 4 --key $(KEY_PATH)
 PAD_SCRIPT := $(PY) scripts/pad_patch.py
 DUMP_SCRIPT := $(PY) scripts/jflashrw.py read
+SET_SCRIPT := $(PY) scripts/set_current.py 
 
 all: build-boot flash-boot build flash-image
 
@@ -42,7 +43,6 @@ help:
 	@echo "all                Build + flash bootloader and build"
 	@echo "                   + flash firmware."
 	@echo "build              Build the firmware image."		
-	@echo "build-upgrade      Build the upgrade firmware image."
 	@echo "build-boot         Build the bootloader."
 	@echo "flash-image        Flash the firmware image."
 	@echo "flash-boot         Erase the flash and flash the bootloader."
@@ -57,18 +57,11 @@ help:
 	@echo "tools              Install used tools."
 
 build:
-	@echo "Building source image..."	
+	@echo "Building firmware image..."	
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(IMG_DIR)
 	$(BUILD_APP) app
-	$(SIGN) -B $(SOURCE_PATH) -- $(IMGTOOL_SETTINGS)
-
-build-upgrade:
-	@echo "Building target image..."	
-	mkdir -p $(BUILD_DIR)
-	mkdir -p $(IMG_DIR)
-	$(BUILD_APP) upgrade_app
-	$(SIGN)	-B $(TARGET_PATH) -- $(IMGTOOL_SETTINGS)
+	$(SIGN) -B $(TARGET_PATH) -- $(IMGTOOL_SETTINGS)
 
 build-boot:
 	@echo "Building bootloader..."	
@@ -77,7 +70,8 @@ build-boot:
 	ninja -C $(BOOT_DIR)/build
 	
 flash-image:
-	@echo "Flashing latest source image to slot 0..."	
+	@echo "Flashing latest source image to slot 0..."
+	$(SET_SCRIPT) $(TARGET_PATH) $(SOURCE_PATH)
 	$(PYFLASH) -a $(SLOT0_OFFSET) -t nrf52840 $(SOURCE_PATH)
 
 flash-boot:
@@ -87,6 +81,7 @@ flash-boot:
 flash-patch:
 	@echo "Flashing latest patch to patch partition..."
 	$(PYFLASH) -a $(PATCH_OFFSET) -t nrf52840 $(PATCH_PATH)
+	$(SET_SCRIPT) $(TARGET_PATH) $(SOURCE_PATH)
 	
 create-patch:
 	@echo "Creating patch..."
