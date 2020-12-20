@@ -54,7 +54,7 @@ help:
 	@echo "connect            Connect to the device terminal."
 	@echo "dump-flash         Dump slot 1 and 0 to files."
 	@echo "clean              Remove all generated binaries."
-	@echo "clean              Install used tools."
+	@echo "tools              Install used tools."
 
 build:
 	@echo "Building source image..."	
