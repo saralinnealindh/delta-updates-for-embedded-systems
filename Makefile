@@ -7,6 +7,8 @@ HEADER_SIZE := 512
 SLOT0_OFFSET := 0xc000
 SLOT1_OFFSET := 0x73000
 PATCH_OFFSET := 0xf8000
+MAX_PATCH_SIZE := 0x6000
+PATCH_HEADER_SIZE := 0x18 #min 0x10
 
 #relevant directories that the user might have to update
 BOOT_DIR := bootloader/mcuboot/boot/zephyr #bootloader image location
@@ -88,7 +90,7 @@ create-patch:
 	mkdir -p $(PATCH_DIR)
 	rm -f $(PATCH_PATH)
 	$(DETOOLS) $(SOURCE_PATH) $(TARGET_PATH) $(PATCH_PATH)
-	$(PAD_SCRIPT) $(PATCH_PATH)
+	$(PAD_SCRIPT) $(PATCH_PATH) $(MAX_PATCH_SIZE) $(HEADER_SIZE)
 	
 connect:
 	@echo "Connecting to device console.."
