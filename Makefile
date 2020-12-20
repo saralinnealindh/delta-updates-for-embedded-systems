@@ -53,7 +53,8 @@ help:
 	@echo "                     the beginning of the image."
 	@echo "connect            Connect to the device terminal."
 	@echo "dump-flash         Dump slot 1 and 0 to files."
-	@echo "clean              Remove all generated binaries."			
+	@echo "clean              Remove all generated binaries."
+	@echo "clean              Install used tools."
 
 build:
 	@echo "Building source image..."	
@@ -116,3 +117,11 @@ dump-slot1:
 
 clean:
 	rm -r -f $(BIN_DIR)
+
+tools:
+	@echo "Installing tools..."
+	pip3 install --user detools
+	pip3 install --user -r bootloader/mcuboot/scripts/requirements.txt
+	pip3 install --user pyocd
+	pip3 install --user pynrfjprog
+	@echo "Done"
