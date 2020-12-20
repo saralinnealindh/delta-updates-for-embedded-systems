@@ -4,8 +4,7 @@ import sys
 def padded_hex(s,p):
     return '0x' + s[2:].zfill(p)
 
-def start(patchname):
-    path='patches/'+patchname+'.bin'
+def start(path):
     size=os.stat(path).st_size 
     f=open(path,'r+b')
     contents = f.read()
