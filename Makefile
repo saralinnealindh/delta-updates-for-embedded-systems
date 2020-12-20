@@ -107,7 +107,7 @@ dump-slot0:
 	$(DUMP_SCRIPT) --start $(SLOT0_OFFSET) --length $(SLOT_SIZE) --file $(SLOT0_PATH)
 
 dump-slot1:
-	@echo "Dumping slot 0 contents.."
+	@echo "Dumping slot 1 contents.."
 	mkdir -p $(DUMP_DIR)
 	rm -f $(SLOT1_PATH)
 	touch $(SLOT1_PATH)
