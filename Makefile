@@ -55,50 +55,60 @@ help:
 	@echo "dump-flash         Dump slot 1 and 0 to files."
 	@echo "clean              Remove all generated binaries."			
 
-build: 
+build:
+	@echo "Building source image..."	
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(IMG_DIR)
 	$(BUILD_APP) app
 	$(SIGN) -B $(SOURCE_PATH) -- $(IMGTOOL_SETTINGS)
 
 build-upgrade:
+	@echo "Building target image..."	
 	mkdir -p $(BUILD_DIR)
 	mkdir -p $(IMG_DIR)
 	$(BUILD_APP) upgrade_app
 	$(SIGN)	-B $(TARGET_PATH) -- $(IMGTOOL_SETTINGS)
 
 build-boot:
+	@echo "Building bootloader..."	
 	mkdir -p $(BOOT_DIR)/build
 	cmake -B $(BOOT_DIR)/build -GNinja -DBOARD=BOARD -S $(BOOT_DIR)
 	ninja -C $(BOOT_DIR)/build
 	
-flash-image: 
+flash-image:
+	@echo "Flashing latest source image to slot 0..."	
 	$(PYFLASH) -a $(SLOT0_OFFSET) -t nrf52840 $(SOURCE_PATH)
 
 flash-boot:
+	@echo "Flashing latest bootloader image..."	
 	ninja -C $(BOOT_DIR)/build flash
 
 flash-patch:
+	@echo "Flashing latest patch to patch partition..."
 	$(PYFLASH) -a $(PATCH_OFFSET) -t nrf52840 $(PATCH_PATH)
 	
 create-patch:
+	@echo "Creating patch..."
 	mkdir -p $(PATCH_DIR)
 	rm -f $(PATCH_PATH)
 	$(DETOOLS) $(SOURCE_PATH) $(TARGET_PATH) $(PATCH_PATH)
 	$(PAD_SCRIPT) $(PATCH_PATH)
 	
 connect:
+	@echo "Connecting to device console.."
 	JLinkRTTLogger -device NRF52 -if SWD -speed 5000 -rttchannel 0 /dev/stdout
 
 dump-flash: dump-slot0 dump-slot1
 
 dump-slot0:
+	@echo "Dumping slot 0 contents.."
 	mkdir -p $(DUMP_DIR)
 	rm -f $(SLOT0_PATH)
 	touch $(SLOT0_PATH)
 	$(DUMP_SCRIPT) --start $(SLOT0_OFFSET) --length $(SLOT_SIZE) --file $(SLOT0_PATH)
 
 dump-slot1:
+	@echo "Dumping slot 0 contents.."
 	mkdir -p $(DUMP_DIR)
 	rm -f $(SLOT1_PATH)
 	touch $(SLOT1_PATH)
