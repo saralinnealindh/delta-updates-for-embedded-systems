@@ -40,7 +40,7 @@ static bool btn_flag;
 /* Debug printouts (adds about 800 B to img) 
  * Define to 0 to disable */
 #ifndef PRINT_ERRORS
-#define PRINT_ERRORS 1
+	#define PRINT_ERRORS 1
 #endif
 
 //Initiating button and led
