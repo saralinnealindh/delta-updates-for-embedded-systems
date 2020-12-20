@@ -1,6 +1,13 @@
 BOARD := nrf52840dk_nrf52840
 PY := python3 
 
+#device flash map
+SLOT_SIZE := 0x67000
+HEADER_SIZE := 512
+SLOT0_OFFSET := 0xc000
+SLOT1_OFFSET := 0x73000
+PATCH_OFFSET := 0xf8000
+
 #relevant directories that the user might have to update
 BOOT_DIR := bootloader/mcuboot/boot/zephyr #bootloader image location
 BUILD_DIR := zephyr/build #zephyr build directory
@@ -23,16 +30,10 @@ PYFLASH := pyocd flash -e sector
 DETOOLS := detools create_patch --compression heatshrink
 BUILD_APP := west build -p auto -b $(BOARD) -d $(BUILD_DIR)
 SIGN := west sign -t imgtool -d $(BUILD_DIR)
-IMGTOOL_SETTINGS := --version 1.0 --header-size 512 --slot-size 0x67000 \
-                    --align 4 --key $(KEY_PATH)
+IMGTOOL_SETTINGS := --version 1.0 --header-size $(HEADER_SIZE) \
+                    --slot-size $(SLOT_SIZE) --align 4 --key $(KEY_PATH)
 PAD_SCRIPT := $(PY) scripts/pad_patch.py
 DUMP_SCRIPT := $(PY) scripts/jflashrw.py read
-
-#device flash map
-SLOT_SIZE := 0x67000
-SLOT0_OFFSET := 0xc000
-SLOT1_OFFSET := 0x73000
-PATCH_OFFSET := 0xf8000
 
 all: build-boot flash-boot build flash-image
 
