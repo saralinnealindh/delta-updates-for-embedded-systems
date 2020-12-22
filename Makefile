@@ -90,7 +90,7 @@ create-patch:
 	mkdir -p $(PATCH_DIR)
 	rm -f $(PATCH_PATH)
 	$(DETOOLS) $(SOURCE_PATH) $(TARGET_PATH) $(PATCH_PATH)
-	$(PAD_SCRIPT) $(PATCH_PATH) $(MAX_PATCH_SIZE) $(HEADER_SIZE)
+	$(PAD_SCRIPT) $(PATCH_PATH) $(MAX_PATCH_SIZE) $(PATCH_HEADER_SIZE)
 	
 connect:
 	@echo "Connecting to device console.."

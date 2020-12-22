@@ -22,9 +22,9 @@ static struct gpio_callback button_cb_data;
 static bool btn_flag;
 
 /* LED */
-#define SLEEP_TIME_MS   1000 //BLINKING SPEED
+#define SLEEP_TIME_MS   1000 /*BLINKING SPEED*/
 
-#define LED0_NODE DT_ALIAS(led1)
+#define LED0_NODE DT_ALIAS(led0)
 #if DT_NODE_HAS_STATUS(LED0_NODE, okay)
 #define LED0	DT_GPIO_LABEL(LED0_NODE, gpios)
 #define PIN	DT_GPIO_PIN(LED0_NODE, gpios)
@@ -43,11 +43,11 @@ static bool btn_flag;
 	#define PRINT_ERRORS 1
 #endif
 
-//Initiating button and led
+/*Initiating button and led*/
 static int config_devices(const struct device *button, 
 					const struct device *led);
 
-//Responds to button 1 being pressed 
+/*Responds to button 1 being pressed*/
 void button_pressed(const struct device *dev, 
 					struct gpio_callback *cb,
 		    		uint32_t pins);
@@ -65,31 +65,27 @@ void main(void)
 	flash_pt = k_malloc(sizeof(struct flash_mem));
 	flash_pt->device = device_get_binding(DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL);
 
-	if (!led||!button||!flash_pt->device)
+	if (!led||!button||!flash_pt->device) {
 		return;
+	}
+	if (config_devices(button,led)) {
+		return;
+	}
 
-	if (config_devices(button,led))
-		return;
-	
 	/*Main loop*/
-	while (1) 
-	{
+	while (1) {
 		/* turn light on/off */
 		gpio_pin_set(led, PIN, (int)led_is_on);
 		led_is_on = !led_is_on;
 		k_msleep(SLEEP_TIME_MS);
-
-		if(btn_flag)
-		{
+		if(btn_flag) {
 			ret = delta_check_and_apply(flash_pt);
-
-			if(ret){
+			if(ret) {
 				#if PRINT_ERRORS == 1
 				printk("%s",delta_error_as_string(ret));
 				#endif
 				return;
 			}
-				
 			btn_flag = false;
 		}
 	}
@@ -98,15 +94,15 @@ void main(void)
 static int config_devices(const struct device *button, const struct device *led)
 {
 	int ret; 
+
 	ret = gpio_pin_configure(led, PIN, GPIO_OUTPUT_ACTIVE | FLAGS);
 	ret |= gpio_pin_configure(button, SW0_GPIO_PIN, SW0_GPIO_FLAGS);
-
-	if (ret)
+	if (ret) {
 		return -1;
-
-	if (gpio_pin_interrupt_configure(button,SW0_GPIO_PIN,GPIO_INT_EDGE_TO_ACTIVE))
+	}
+	if (gpio_pin_interrupt_configure(button,SW0_GPIO_PIN,GPIO_INT_EDGE_TO_ACTIVE)) {
 		return -1;
-	
+	}
 	gpio_init_callback(&button_cb_data, button_pressed, BIT(SW0_GPIO_PIN));
 	gpio_add_callback(button, &button_cb_data);
 

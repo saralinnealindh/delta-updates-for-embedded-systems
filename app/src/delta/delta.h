@@ -22,6 +22,9 @@
 /* PATCH HEADER SIZE */
 #define HEADER_SIZE 0x18
 
+/* PAGE SIZE */
+#define PAGE_SIZE 0x1000
+
 /* Error codes. */
 #define DELTA_OK                                          0
 #define DELTA_SLOT1_OUT_OF_MEMORY                        28
@@ -33,6 +36,7 @@
 #define DELTA_INVALID_BUF_SIZE							 34
 #define DELTA_CLEARING_ERROR							 35
 #define DELTA_NO_FLASH_FOUND							 36
+#define DELTA_PATCH_HEADER_ERROR                         37
 
 /* FLASH MEMORY AND POINTERS TO CURRENT LOCATION OF BUFFERS AND END OF IMAGE AREAS.
  * - "Patch" refers to the area containing the patch image. 
@@ -46,7 +50,8 @@ struct flash_mem {
 	off_t from_current; 
 	off_t from_end; 
 	off_t to_current; 
-	off_t to_end; 
+	off_t to_end;
+	size_t write_buf; 
 };
 
 /* FUNCTION DECLARATIONS */
