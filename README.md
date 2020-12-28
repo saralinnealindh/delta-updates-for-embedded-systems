@@ -1,1 +1,3 @@
-Based on: https://github.com/eerimoq/detools
+**Delta updates for zephyr**
+
+This project is an implementation of the [detools project](https://github.com/eerimoq/detools) for zephyr.
