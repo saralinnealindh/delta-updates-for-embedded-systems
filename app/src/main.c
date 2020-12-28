@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016 Intel Corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <zephyr.h>
 #include <sys/util.h>
 #include <sys/printk.h>
@@ -37,25 +43,26 @@ static bool btn_flag;
 #define FLAGS	0
 #endif
 
-/* Debug printouts (adds about 800 B to img) 
- * Define to 0 to disable */
+/* Debug printouts (adds about 800 B to img)
+ * Define to 0 to disable
+ */
 #ifndef PRINT_ERRORS
 	#define PRINT_ERRORS 1
 #endif
 
 /*Initiating button and led*/
-static int config_devices(const struct device *button, 
+static int config_devices(const struct device *button,
 					const struct device *led);
 
 /*Responds to button 1 being pressed*/
-void button_pressed(const struct device *dev, 
+void button_pressed(const struct device *dev,
 					struct gpio_callback *cb,
-		    		uint32_t pins);
+					uint32_t pins);
 
 /* MAIN FUNCTION */
 void main(void)
 {
-	const struct device *led,*button;
+	const struct device *led, *button;
 	struct flash_mem *flash_pt;
 	bool led_is_on = true;
 	int ret;
@@ -65,10 +72,10 @@ void main(void)
 	flash_pt = k_malloc(sizeof(struct flash_mem));
 	flash_pt->device = device_get_binding(DT_CHOSEN_ZEPHYR_FLASH_CONTROLLER_LABEL);
 
-	if (!led||!button||!flash_pt->device) {
+	if (!led || !button || !flash_pt->device) {
 		return;
 	}
-	if (config_devices(button,led)) {
+	if (config_devices(button, led)) {
 		return;
 	}
 
@@ -78,11 +85,11 @@ void main(void)
 		gpio_pin_set(led, PIN, (int)led_is_on);
 		led_is_on = !led_is_on;
 		k_msleep(SLEEP_TIME_MS);
-		if(btn_flag) {
+		if (btn_flag) {
 			ret = delta_check_and_apply(flash_pt);
-			if(ret) {
+			if (ret) {
 				#if PRINT_ERRORS == 1
-				printk("%s",delta_error_as_string(ret));
+				printk("%s", delta_error_as_string(ret));
 				#endif
 				return;
 			}
@@ -93,22 +100,22 @@ void main(void)
 
 static int config_devices(const struct device *button, const struct device *led)
 {
-	int ret; 
+	int ret;
 
 	ret = gpio_pin_configure(led, PIN, GPIO_OUTPUT_ACTIVE | FLAGS);
 	ret |= gpio_pin_configure(button, SW0_GPIO_PIN, SW0_GPIO_FLAGS);
 	if (ret) {
 		return -1;
 	}
-	if (gpio_pin_interrupt_configure(button,SW0_GPIO_PIN,GPIO_INT_EDGE_TO_ACTIVE)) {
+	if (gpio_pin_interrupt_configure(button, SW0_GPIO_PIN, GPIO_INT_EDGE_TO_ACTIVE)) {
 		return -1;
 	}
 	gpio_init_callback(&button_cb_data, button_pressed, BIT(SW0_GPIO_PIN));
 	gpio_add_callback(button, &button_cb_data);
 
-	btn_flag = false; 
+	btn_flag = false;
 
-	return 0; 
+	return 0;
 }
 
 void button_pressed(const struct device *dev, struct gpio_callback *cb,

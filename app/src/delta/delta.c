@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2016 Intel Corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include "delta.h"
 
-/* 
-*  IMAGE/FLASH MANAGEMENT
-*/
+/*
+ *  IMAGE/FLASH MANAGEMENT
+ */
 
 static int erase_page(struct flash_mem *flash, off_t offset)
 {
@@ -11,8 +17,8 @@ static int erase_page(struct flash_mem *flash, off_t offset)
 	if (flash_write_protection_set(flash->device, false)) {
 		return -DELTA_CLEARING_ERROR;
 	}
-	if (flash_erase(flash->device,offset,PAGE_SIZE)) {
-		return -DELTA_CLEARING_ERROR; 
+	if (flash_erase(flash->device, offset, PAGE_SIZE)) {
+		return -DELTA_CLEARING_ERROR;
 	}
 	if (flash_write_protection_set(flash->device, true)) {
 		return -DELTA_CLEARING_ERROR;
@@ -25,34 +31,34 @@ static int delta_flash_write(void *arg_p,
 					const uint8_t *buf_p,
 					size_t size)
 {
-	struct flash_mem *flash; 
-    flash = (struct flash_mem *)arg_p;
+	struct flash_mem *flash;
 
+	flash = (struct flash_mem *)arg_p;
 	flash->write_buf += size;
 
-	if(flash->write_buf >= PAGE_SIZE) {
-		if(erase_page(flash,flash->to_current + (off_t) size)) {
+	if (flash->write_buf >= PAGE_SIZE) {
+		if (erase_page(flash, flash->to_current + (off_t) size)) {
 			return -DELTA_CLEARING_ERROR;
 		}
 		flash->write_buf = 0;
 	}
 
-	if(!flash) {
+	if (!flash) {
 		return -DELTA_CASTING_ERROR;
 	}
-	if (flash_write_protection_set(flash->device,false)) {
-		return -DELTA_WRITING_ERROR; 
+	if (flash_write_protection_set(flash->device, false)) {
+		return -DELTA_WRITING_ERROR;
 	}
-	if (flash_write(flash->device, flash->to_current,buf_p, size)) {
+	if (flash_write(flash->device, flash->to_current, buf_p, size)) {
 		return -DELTA_WRITING_ERROR;
 	}
 	if (flash_write_protection_set(flash->device, true)) {
-		return -DELTA_WRITING_ERROR; 
+		return -DELTA_WRITING_ERROR;
 	}
 
 	flash->to_current += (off_t) size;
-	if (flash->to_current>=flash->to_end) {
-		return -DELTA_SLOT1_OUT_OF_MEMORY; 
+	if (flash->to_current >= flash->to_end) {
+		return -DELTA_SLOT1_OUT_OF_MEMORY;
 	}
 
 	return DELTA_OK;
@@ -62,24 +68,25 @@ static int delta_flash_from_read(void *arg_p,
 					uint8_t *buf_p,
 					size_t size)
 {
-	struct flash_mem *flash; 
-    flash = (struct flash_mem *)arg_p;
+	struct flash_mem *flash;
 
-	if(!flash) {
+	flash = (struct flash_mem *)arg_p;
+
+	if (!flash) {
 		return -DELTA_CASTING_ERROR;
 	}
 	if (size <= 0) {
-		return -DELTA_INVALID_BUF_SIZE; 
+		return -DELTA_INVALID_BUF_SIZE;
 	}
 
-	if(flash_read(flash->device,flash->from_current,buf_p,size)) {
-		return -DELTA_READING_SOURCE_ERROR; 
+	if (flash_read(flash->device, flash->from_current, buf_p, size)) {
+		return -DELTA_READING_SOURCE_ERROR;
 	}
 
 	flash->from_current += (off_t) size;
-	if (flash->from_current>=flash->from_end) {
+	if (flash->from_current >= flash->from_end) {
 		return -DELTA_READING_SOURCE_ERROR;
-	} 
+	}
 
 	return DELTA_OK;
 }
@@ -88,53 +95,55 @@ static int delta_flash_patch_read(void *arg_p,
 					uint8_t *buf_p,
 					size_t size)
 {
-	struct flash_mem *flash; 
-    flash = (struct flash_mem *)arg_p;
+	struct flash_mem *flash;
 
-	if(!flash) {
-		return -DELTA_CASTING_ERROR; 
+	flash = (struct flash_mem *)arg_p;
+
+	if (!flash) {
+		return -DELTA_CASTING_ERROR;
 	}
 	if (size <= 0) {
 		return -DELTA_INVALID_BUF_SIZE;
 	}
 
-	if (flash_read(flash->device,flash->patch_current,buf_p,size)) {
+	if (flash_read(flash->device, flash->patch_current, buf_p, size)) {
 		return -DELTA_READING_PATCH_ERROR;
 	}
-	
+
 	flash->patch_current += (off_t) size;
-	if (flash->patch_current>=flash->patch_end) {
-		return -DELTA_READING_PATCH_ERROR; 
+	if (flash->patch_current >= flash->patch_end) {
+		return -DELTA_READING_PATCH_ERROR;
 	}
-	
+
 	return DELTA_OK;
 }
 
-static int delta_flash_seek(void *arg_p,int offset)
+static int delta_flash_seek(void *arg_p, int offset)
 {
 	struct flash_mem *flash;
-    flash = (struct flash_mem *)arg_p;
 
-	if(!flash) {
-		return -DELTA_CASTING_ERROR; 
+	flash = (struct flash_mem *)arg_p;
+
+	if (!flash) {
+		return -DELTA_CASTING_ERROR;
 	}
 
 	flash->from_current += offset;
 
-	if (flash->from_current>=flash->from_end) {
+	if (flash->from_current >= flash->from_end) {
 		return -DELTA_SEEKING_ERROR;
 	}
 
 	return DELTA_OK;
 }
 
-/* 
-*  INIT
-*/
+/*
+ *  INIT
+ */
 
 static int delta_init_flash_mem(struct flash_mem *flash)
 {
-	if(!flash) {
+	if (!flash) {
 		return -DELTA_NO_FLASH_FOUND;
 	}
 
@@ -157,86 +166,87 @@ static int delta_init(struct flash_mem *flash)
 	int ret;
 
 	ret = delta_init_flash_mem(flash);
-    if(ret) {
+	if (ret) {
 		return ret;
 	}
-	ret = erase_page(flash,flash->to_current);
-    if(ret) {
-        return ret;
+	ret = erase_page(flash, flash->to_current);
+	if (ret) {
+		return ret;
 	}
 
-    return DELTA_OK;
+	return DELTA_OK;
 }
 
 /*
-*  PUBLIC FUNCTIONS 
-*/
+ *  PUBLIC FUNCTIONS
+ */
 
 int delta_check_and_apply(struct flash_mem *flash)
 {
-    int patch_size,ret;
+	int patch_size, ret;
 
-    patch_size = delta_read_patch_header(flash);
+	patch_size = delta_read_patch_header(flash);
 
-    if(patch_size<0) {
-        return patch_size;
-	}
-    else if(patch_size>0)
-    {
+	if (patch_size < 0) {
+		return patch_size;
+	} else if (patch_size > 0) {
 		ret = delta_init(flash);
-		if(ret) {
+		if (ret) {
 			return ret;
 		}
-        ret = detools_apply_patch_callbacks(delta_flash_from_read,
+		ret = detools_apply_patch_callbacks(delta_flash_from_read,
 											delta_flash_seek,
 											delta_flash_patch_read,
 											(size_t) patch_size,
 											delta_flash_write,
 											flash);
-		if(ret<=0) {
+		if (ret <= 0) {
 			return ret;
 		}
-        if(boot_request_upgrade(BOOT_UPGRADE_PERMANENT)) {
+		if (boot_request_upgrade(BOOT_UPGRADE_PERMANENT)) {
 			return -1;
-		}	
+		}
 		sys_reboot(SYS_REBOOT_COLD);
-    }
-    
-    return 0;
+	}
+
+	return 0;
 }
 
 int delta_read_patch_header(struct flash_mem *flash)
 {
 	int header_len, word_len, size;
+	unsigned char *buf_p, *buf_end, buf[header_len];
+	unsigned char word_buf[] = {'N', 'E', 'W', 'P', 'A',
+								'T', 'C', 'H'};
+	unsigned char new_word[] = {'F', 'F', 'F', 'F', 'F',
+								'F', 'F', 'F'};
+
 	word_len = 0x8;
 	header_len = HEADER_SIZE;
-	unsigned char *buf_p,*buf_end,buf[header_len];
-	unsigned char word_buf[] = {'N','E','W','P','A','T','C','H'};
-	unsigned char new_word[] = {'F','F','F','F','F','F','F','F'};
 
-	if(flash_read(flash->device,STORAGE_OFFSET,buf,header_len)) {
-		return -DELTA_PATCH_HEADER_ERROR; 
+	if (flash_read(flash->device, STORAGE_OFFSET, buf, header_len)) {
+		return -DELTA_PATCH_HEADER_ERROR;
 	}
 
-	if(strncmp(buf,word_buf,word_len)) {
-		return -DELTA_OK; 
+	if (strncmp(buf, word_buf, word_len)) {
+		return -DELTA_OK;
 	}
 
-	buf_p=&buf[word_len];
-	buf_end=&buf[header_len];
+	buf_p = &buf[word_len];
+	buf_end = &buf[header_len];
 
-	size = (int) strtol(buf_p,buf_end,header_len-word_len);
+	size = (int) strtol(buf_p, buf_end, header_len-word_len);
 
 	if (flash_write_protection_set(flash->device, false)) {
-		return -DELTA_PATCH_HEADER_ERROR; 
+		return -DELTA_PATCH_HEADER_ERROR;
 	}
 
-	if (flash_write(flash->device, STORAGE_OFFSET,new_word, word_len)) {
-		return -DELTA_PATCH_HEADER_ERROR; 
+	if (flash_write(flash->device, STORAGE_OFFSET, new_word, word_len)) {
+		return -DELTA_PATCH_HEADER_ERROR;
 	}
 
 	if (flash_write_protection_set(flash->device, true)) {
-		return -DELTA_PATCH_HEADER_ERROR; 
+		return -DELTA_PATCH_HEADER_ERROR;
 	}
 
 	return size;
@@ -244,16 +254,16 @@ int delta_read_patch_header(struct flash_mem *flash)
 
 const char *delta_error_as_string(int error)
 {
-	if (error<28) {
+	if (error < 28) {
 		return detools_error_as_string(error);
 	}
 
 	if (error < 0) {
-        error *= -1;
-    }
+		error *= -1;
+	}
 
-	switch(error) {
-    case DELTA_SLOT1_OUT_OF_MEMORY:
+	switch (error) {
+	case DELTA_SLOT1_OUT_OF_MEMORY:
 		return "Slot 1 out of memory.";
 	case DELTA_READING_PATCH_ERROR:
 		return "Error reading patch.";

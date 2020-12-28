@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016 Intel Corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #ifndef DELTA_H
 #define DELTA_H
 
@@ -39,29 +45,29 @@
 #define DELTA_PATCH_HEADER_ERROR                         37
 
 /* FLASH MEMORY AND POINTERS TO CURRENT LOCATION OF BUFFERS AND END OF IMAGE AREAS.
- * - "Patch" refers to the area containing the patch image. 
- * - "From" refers to the area containing the source image. 
+ * - "Patch" refers to the area containing the patch image.
+ * - "From" refers to the area containing the source image.
  * - "To" refers to the area where the target image is to be placed.
- * */
+ */
 struct flash_mem {
 	const struct device *device;
-	off_t patch_current; 
-	off_t patch_end; 
-	off_t from_current; 
-	off_t from_end; 
-	off_t to_current; 
+	off_t patch_current;
+	off_t patch_end;
+	off_t from_current;
+	off_t from_end;
+	off_t to_current;
 	off_t to_end;
-	size_t write_buf; 
+	size_t write_buf;
 };
 
 /* FUNCTION DECLARATIONS */
 
 /**
- * Checks if there is patch in the patch partition 
+ * Checks if there is patch in the patch partition
  * and applies that patch if it exists. Then restarts
- * the device and boots from the new image. 
+ * the device and boots from the new image.
  *
- * @param[in] flash the devices flash memory. 
+ * @param[in] flash the devices flash memory.
  *
  * @return zero(0) if no patch or a negative error
  * code.
@@ -69,15 +75,15 @@ struct flash_mem {
 int delta_check_and_apply(struct flash_mem *flash);
 
 /**
- * Functiong for reading the metadata from the patch and 
- * changing the header to mark that the patch has been 
+ * Functiong for reading the metadata from the patch and
+ * changing the header to mark that the patch has been
  * applied.
  *
- * @param[in] flash the devices flash memory. 
+ * @param[in] flash the devices flash memory.
  *
  * @return zero(0) if not patch, a negative value (0>)
  * representing an error, or a positive value (0<)
- * representing the patch size. 
+ * representing the patch size.
  */
 int delta_read_patch_header(struct flash_mem *flash);
 
