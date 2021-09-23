@@ -1,7 +1,7 @@
 # About
 This is a short example program showcasing an implementation of [DETools](https://github.com/eerimoq/detools) for [Zephyr](https://www.zephyrproject.org/) which enables firmware patching. 
 
-The program was created for my bachelors thesis, [Delta Updates for Embedded Systems](https://hdl.handle.net/20.500.12380/302598), which one may look through for implementation details, desriptions of the algorithms used, methodology, and suggestions for further research, among other things. Additionally, a brief summary of some key features will be outlined below. 
+The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.500.12380/302598), which one may look through for implementation details, desriptions of the algorithms used, methodology, and suggestions for further research, among other things. Additionally, a brief summary of some key features will be outlined below. 
 
 * [BSDiff](http://www.daemonology.net/bsdiff/)
 * [nRF52840 DK](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk)
