@@ -27,6 +27,6 @@ Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/ge
     $ west zephyr-export
     $ pip3 install --user -r ./zephyr/scripts/requirements.txt
 
-Then complete the remaining steps under section 4. Finally, run `make tools`.
+Then complete the remaining steps under section 4. Finally, return to the project folder and run `make tools`.
 
 # Example Usage
