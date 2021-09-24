@@ -11,9 +11,9 @@ MAX_PATCH_SIZE := 0x6000
 PATCH_HEADER_SIZE := 0x18 #min 0x10
 
 #relevant directories that the user might have to update
-BOOT_DIR := bootloader/mcuboot/boot/zephyr #bootloader image location
-BUILD_DIR := zephyr/build #zephyr build directory
-KEY_PATH := bootloader/mcuboot/root-rsa-2048.pem #key for signing images
+BOOT_DIR := bootloader/mcuboot/boot/zephyr#bootloader image location
+BUILD_DIR := zephyr/build#zephyr build directory
+KEY_PATH := bootloader/mcuboot/root-rsa-2048.pem#key for signing images
 
 #Names of generated folders and files (can be changed to whatever)
 BIN_DIR := binaries
@@ -68,7 +68,7 @@ build:
 build-boot:
 	@echo "Building bootloader..."	
 	mkdir -p $(BOOT_DIR)/build
-	cmake -B $(BOOT_DIR)/build -GNinja -DBOARD=BOARD -S $(BOOT_DIR)
+	cmake -B $(BOOT_DIR)/build -GNinja -DBOARD=$(BOARD) -S $(BOOT_DIR)
 	ninja -C $(BOOT_DIR)/build
 	
 flash-image:
