@@ -33,7 +33,7 @@ Then complete the remaining steps under section 4. Finally, return to the projec
 This small guide features some examples of how to use the program. A good place to start might be to perform them all sequentially. 
 
 ### Build and flash the bootloader
-If the device currently doesnt have MCUBoot installed the first step is to build it and download it to the device, which one does with: 
+If the device currently does not have MCUBoot installed the first step is to build it and download it to the device, which one does with: 
 
     $ make build-boot
     $ make flash-boot
@@ -44,12 +44,22 @@ The next step might be to build and flash the firmware.
     $ make build
     $ make flash-image
 
+When executing the second command one will get a prompt asking if this version should be set as the currently running one, to which you may respond `y`. This functionality exists as some rudimentary way of keeping track of versions when creating a patches. 
+
 ### Modify the program to flash another LED
-In order to have get a patch we need to upgrade the program, which one easily can create by modifying which LED light is flashing. 
+In order to have get a patch we need to create a new version of the program, which one easily can create by modifying which LED light is flashing. This is easiest done by opening up `delta-updates-for-embedded-systems/app/src/main.c` in ones editor of choice and replacing `#define LED0_NODE DT_ALIAS(led0)` with `#define LED0_NODE DT_ALIAS(led1)` (or some other LED). Then building with: 
+
+    $ make build
 
 ### Create and flash the patch
+Creating a patch requires you to at some point have executed step 2 and 3, in order to have both a "currently running" and a "latest created" version of the software set. The patch created will contain instructions for to transform the former of these into the later. When the patch is created it may downloaded to the patch partition. These steps are performed with: 
+
+    $ make create-patch
+    $ make flash-patch
+
+After executing the second command one will get a prompt asking if this version should be set as the currently running one. To this one might want to respond `y` if the upgrade was successful or `n` if it was not.
 
 ### Upgrade the firmware
-
+When the patch is downloaded to the patch partition and the program is flashing LED1 it is time to start the patching process, which one does by clicking button 1. The LED should stop blinking for a few seconds while its creating the new firmware and reboots, and then start up again doing whatever one modified the new program to do. 
 
 
