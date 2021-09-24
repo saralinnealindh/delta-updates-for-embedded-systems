@@ -28,7 +28,9 @@ Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/ge
     $ west zephyr-export
     $ pip3 install --user -r ./zephyr/scripts/requirements.txt
 
-Then complete the remaining steps under section 4. Finally, return to the project folder and run `make tools` to install the needed python packages (you might also need to download and install [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download#infotabs) and [J-Link Software](https://www.segger.com/downloads/jlink/), to enable some utilities for flashing and debugging the device).
+Then complete the remaining steps under section 4. 
+
+Finally, install the tools used in the project. Return to the project folder and run `make tools` to install the needed python packages. Download and install [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download#infotabs) and [J-Link Software](https://www.segger.com/downloads/jlink/), to enable some utilities for flashing and debugging the device.
 
 # Example Usage
 This small guide features some examples of how to use the program. A good place to start might be to perform them all sequentially. 
