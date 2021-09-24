@@ -2,7 +2,7 @@
 
 This is a example program showcasing an implementation of [DETools](https://github.com/eerimoq/detools) for [Zephyr](https://www.zephyrproject.org/). It allows for incremental firmware updates, or [delta updates](https://en.wikipedia.org/wiki/Delta_update), as an alternative to the standard procedure of downloading new firmware in its entirety. 
 
-_What does the program itself do???_
+The program itself is a modification of the Zephyr sample program "Blinky" (which flashes LED 1 on the board), with the added functionality that When a button 1 is pressed, a the program checks for a new patch and, if such a patch exists, performs a firmware upgrade. A developer may easily modify the program code to make the application flash LED 2 instead, create a a patch with this change, download it to the board, push button 1, and confirm whether the upgrade was successful by checking which LED is flashing.
 
 The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.500.12380/302598), which one may look through for implementation details, descriptions of the algorithms used, methodology, and suggestions for further research, among other things. Additionally, a brief summary of some key features will be outlined below.
 
@@ -10,6 +10,7 @@ The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.50
 * The program is currently hardware specific and assumes the Nordic [nRF52840 DK](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) SoC is used. However, it will likely very easily be ported to other [Zephyr supported boards](https://docs.zephyrproject.org/latest/boards/index.html). 
 * The program utilizes the Device Firmware Upgrade features facilitated by the [MCUBoot](https://www.mcuboot.com/) bootloader, and is therefore dependent on its usage (MCUBoot is automatically included if one follows the environment set up steps below). Most notably it takes advantage of the [flash partition layout](https://github.com/mcu-tools/mcuboot/blob/main/docs/readme-zephyr.md). 
 * _How are the upgrades performed???_
+* _Scripts_ 
 * Limited testing has resulted in patch sizes of 1.6 to 6.4 percent of target image size depending on the types of changes made. However, more extended testing has to be performed in order to make any generalized claims.
 
 ### Purpose 
