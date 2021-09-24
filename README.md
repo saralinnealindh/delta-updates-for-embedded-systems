@@ -31,7 +31,7 @@ Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/ge
 Then complete the remaining steps under section 4. Finally, return to the project folder and run `make tools`.
 
 # Example Usage
-This small guide features some examples of how to use the program. A good place to start might be to perform them all sequentially. Note that all of the examples where information is downloaded to the device assumes one has the device connected via the USB interface. 
+This small guide features some examples of how to use the program. A good place to start might be to perform them all sequentially. 
 
 ### Build and flash the bootloader
 If the device currently does not have MCUBoot installed the first step is to build it and download it to the device, which one does with: 
