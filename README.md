@@ -24,7 +24,9 @@ Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/ge
     $ cd delta-updates-for-embedded-systems
     $ west init -l app/
     $ west update
+    $ west zephyr-export
+    $ pip3 install --user -r ./zephyr/scripts/requirements.txt
 
-Then complete the remaining steps under section 3 and 4. Finally, run `make tools`.
+Then complete the remaining steps under section 4. Finally, run `make tools`.
 
 # Example Usage
