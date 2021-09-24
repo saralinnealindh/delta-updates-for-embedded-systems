@@ -19,7 +19,7 @@ The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.50
 Many resource-constrained IoT units are used in a manner which makes them inaccessible via cable and at the same time unable to receive large amounts of data using radio transmissions. Upgrading firmware is hence difficult or in some cases impossible. Integrating support for delta updates in the unit is a potential solution to this problem, as it significantly reduces the payload during an upgrade scenario. However, as of now there is no open-source solution for delta upgrades in embedded systems. The purpose of the application is to such a solution is achievable and that it causes a significant payload reduction. 
 
 # Environment Setup
-Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html) up to step 3.2 "Get the Zephyr source code". Here one should run the commands below instead of the ones in the guide:
+Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html) up to step 3.2 "Get the Zephyr source code". Here you should run the commands below instead of the ones in the guide:
 
     $ git clone https://gitlab.endian.se/thesis-projects/delta-updates-for-embedded-systems.git
     $ cd delta-updates-for-embedded-systems
@@ -28,7 +28,9 @@ Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/ge
     $ west zephyr-export
     $ pip3 install --user -r ./zephyr/scripts/requirements.txt
 
-Then complete the remaining steps under section 4. Finally, return to the project folder and run `make tools`.
+Then complete the remaining steps under section 4. Finally, return to the project folder and run `make tools` to install the needed python packages. 
+
+You might also need to download and install the [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download#infotabs) and [J-Link Software](https://www.segger.com/downloads/jlink/), to enable some utilities for flashing and debugging the device.
 
 # Example Usage
 This small guide features some examples of how to use the program. A good place to start might be to perform them all sequentially. 
