@@ -121,4 +121,5 @@ tools:
 	pip3 install --user -r bootloader/mcuboot/scripts/requirements.txt
 	pip3 install --user pyocd
 	pip3 install --user pynrfjprog
+	pip3 install --user imgtool
 	@echo "Done"
