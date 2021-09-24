@@ -7,9 +7,10 @@ The program itself is a modification of the Zephyr sample program "Blinky" (whic
 ### Key features 
 The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.500.12380/302598), which one may look through for implementation details, descriptions of the algorithms used, methodology, and suggestions for further research, among other things. For a breif overview of some key features one may refer to the list below:
 
-* The program is currently hardware specific and assumes the Nordic [nRF52840 DK](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) SoC is used. However, it will likely very easily be ported to other [Zephyr supported boards](https://docs.zephyrproject.org/latest/boards/index.html). 
-* The delta encoding algorithm used is the DETools implementation of [BSDiff](http://www.daemonology.net/bsdiff/) using [heat-shrink](https://github.com/atomicobject/heatshrink) for compression. 
-* The program utilizes the Device Firmware Upgrade features facilitated by the [MCUBoot](https://www.mcuboot.com/) bootloader, and is therefore dependent on its usage (MCUBoot is automatically included if one follows the environment set up steps below). Most notably it takes advantage of the [flash map layout](https://github.com/mcu-tools/mcuboot/blob/main/docs/readme-zephyr.md). 
+* The program is currently hardware specific and assumes the Nordic [nRF52840 DK](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) SoC is used. However, it will likely very easily be ported to other [Zephyr supported boards](https://docs.zephyrproject.org/latest/boards/index.html).
+* Downloading firmware to the device is currently only supported using the USB interface.
+* The delta encoding algorithm used is the DETools implementation of [BSDiff](http://www.daemonology.net/bsdiff/) using [heat-shrink](https://github.com/atomicobject/heatshrink) for compression.
+* The program utilizes the Device Firmware Upgrade features facilitated by the [MCUBoot](https://www.mcuboot.com/) bootloader, and is therefore dependent on its usage (MCUBoot is automatically included if one follows the environment set up steps below). Most notably it takes advantage of the [flash map layout](https://github.com/mcu-tools/mcuboot/blob/main/docs/readme-zephyr.md).
 * The patching process makes use of three partitions: the primary partition, the secondary partition, and the patch partition. The current firmware runs on the primary partition, the new firmware is created on the secondary partition, and the patch is downloaded to the patch partition. Naturally, this means that the size of the patch partition puts an upper limit to the size of the patch. When the new firmware has been created, the device requests a swap of the primary and the secondary partition and reboots, as in the [normal upgrade scanario](https://www.mcuboot.com/documentation/design/#high-level-operation).
 * Creation of patches, downloading firmware to the device, building, and a few other things may easily be done using the make commands provided in the makefile. A full list of these commands can be acquired using `make help`.
 * Limited testing has resulted in patch sizes of 1.6 to 6.4 percent of target image size depending on the types of changes made. However, more extended testing has to be performed in order to make any generalized claims.
@@ -52,7 +53,9 @@ In order to have get a patch we need to create a new version of the program, whi
     $ make build
 
 ### Create and flash the patch
-Creating a patch requires you to at some point have executed step 2 and 3, in order to have both a "currently running" and a "latest created" version of the software set. The patch created will contain instructions for to transform the former of these into the later. When the patch is created it may downloaded to the patch partition. These steps are performed with: 
+Creating a patch requires step 2 and 3 to at some point have been executed, as a "currently running" and a "latest created" version of the software has to have been set. The patch created will contain instructions for to transform the former of these into the later. 
+
+The commands for creating the patch and downloading it the patch partition are: 
 
     $ make create-patch
     $ make flash-patch
