@@ -8,7 +8,7 @@ SLOT0_OFFSET := 0xc000
 SLOT1_OFFSET := 0x73000
 PATCH_OFFSET := 0xf8000
 MAX_PATCH_SIZE := 0x6000
-PATCH_HEADER_SIZE := 0x18 #min 0x10
+PATCH_HEADER_SIZE := 0x8 
 
 #relevant directories that the user might have to update
 BOOT_DIR := bootloader/mcuboot/boot/zephyr#bootloader image location

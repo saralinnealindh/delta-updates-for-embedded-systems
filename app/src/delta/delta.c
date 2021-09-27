@@ -214,34 +214,26 @@ int delta_check_and_apply(struct flash_mem *flash)
 
 int delta_read_patch_header(struct flash_mem *flash)
 {
-	int header_len, word_len, size;
-	unsigned char *buf_p, *buf_end, buf[HEADER_SIZE];
-	unsigned char word_buf[] = {'N', 'E', 'W', 'P', 'A',
-								'T', 'C', 'H'};
-	unsigned char new_word[] = {'F', 'F', 'F', 'F', 'F',
-								'F', 'F', 'F'};
+	unsigned int size, new_patch, reset_msg, patch_header[2];
 
-	word_len = 0x8;
-	header_len = HEADER_SIZE;
+	new_patch = 0x5057454E; // ASCII for "NEWP" signaling new patch
+	reset_msg = 0x0U; // reset "NEWP"
 
-	if (flash_read(flash->device, STORAGE_OFFSET, buf, header_len)) {
+	if (flash_read(flash->device, STORAGE_OFFSET, patch_header, sizeof(patch_header))) {
 		return -DELTA_PATCH_HEADER_ERROR;
 	}
 
-	if (strncmp(buf, word_buf, word_len)) {
+	if (new_patch!=patch_header[0]) {
 		return -DELTA_OK;
 	}
 
-	buf_p = &buf[word_len];
-	buf_end = &buf[header_len];
-
-	size = (int) strtol(buf_p, buf_end, header_len-word_len);
+	size = patch_header[1];
 
 	if (flash_write_protection_set(flash->device, false)) {
 		return -DELTA_PATCH_HEADER_ERROR;
 	}
 
-	if (flash_write(flash->device, STORAGE_OFFSET, new_word, word_len)) {
+	if (flash_write(flash->device, STORAGE_OFFSET, &reset_msg, sizeof(reset_msg))) {
 		return -DELTA_PATCH_HEADER_ERROR;
 	}
 

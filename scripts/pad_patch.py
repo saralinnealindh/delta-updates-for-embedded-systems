@@ -5,13 +5,15 @@ def padded_hex(s,p):
     return '0x' + s[2:].zfill(p)
 
 def start(path,max_size,input_header_size):
-    header_size = max(input_header_size,16)
+    header_size = max(input_header_size,8)
     size=os.stat(path).st_size 
     f=open(path,'r+b')
     contents = f.read()
     f.seek(0)
-    padding = 'NEWPATCH' + padded_hex(hex(size),header_size-10)
-    f.write(padding.encode())
+    #padding = 'NEWPATCH' + padded_hex(hex(size),header_size-10)
+    #f.write(padding.encode())
+    f.write('NEWP'.encode()) 
+    f.write(size.to_bytes(header_size-4,byteorder='little'))
     f.write(contents)
 
     print("Patch size: " + hex(size) + " + " + hex(header_size) + " (header)")

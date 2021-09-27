@@ -26,7 +26,7 @@
 #define STORAGE_SIZE FLASH_AREA_SIZE(storage)
 
 /* PATCH HEADER SIZE */
-#define HEADER_SIZE 0x18
+#define HEADER_SIZE 0x8
 
 /* PAGE SIZE */
 #define PAGE_SIZE 0x1000
