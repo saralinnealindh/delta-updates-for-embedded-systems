@@ -66,7 +66,7 @@ After executing the second command one will get a prompt asking if this version 
 ### Upgrade the firmware
 When the patch is downloaded to the patch partition and the program is flashing LED 1 it is time to start the patching process, which one does by clicking button 1. The LED should stop blinking for a few seconds while its creating the new firmware and reboots, and then start up again doing whatever one modified the new program to do. 
 
-# Patches 
+# Notable changes
 
 
 | Date | Comment | Commit |
