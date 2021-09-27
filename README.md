@@ -69,6 +69,6 @@ When the patch is downloaded to the patch partition and the program is flashing 
 # Patches 
 
 
-| Date | Comment |
-| ------ | ------ |
-| **2021-09-27**| Patch header is now shorter (8 bytes compared to 24 bytes). Patch size is no longer a string. "NEWPATCH" has been shortened to "NEWP". |
+| Date | Comment | Commit |
+| ------ | ------ | ------ |
+| **2021-09-27**| Patch header is now shorter (8 bytes compared to 24 bytes). Patch size is no longer a string. "NEWPATCH" has been shortened to "NEWP". | [cfa78347](https://gitlab.endian.se/thesis-projects/delta-updates-for-embedded-systems/-/commit/cfa78347cefd7b46330c46a17ffad75ccb58abee) |
