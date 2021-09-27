@@ -10,8 +10,6 @@ def start(path,max_size,input_header_size):
     f=open(path,'r+b')
     contents = f.read()
     f.seek(0)
-    #padding = 'NEWPATCH' + padded_hex(hex(size),header_size-10)
-    #f.write(padding.encode())
     f.write('NEWP'.encode()) 
     f.write(size.to_bytes(header_size-4,byteorder='little'))
     f.write(contents)
