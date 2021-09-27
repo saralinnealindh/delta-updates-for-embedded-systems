@@ -1,7 +1,7 @@
 # About
-This is a example program showcasing an implementation of [DETools](https://github.com/eerimoq/detools) for [Zephyr](https://www.zephyrproject.org/). It allows for incremental firmware updates, or [delta updates](https://en.wikipedia.org/wiki/Delta_update), as an alternative to the standard procedure of downloading new firmware in its entirety. 
+This is an example program showcasing an implementation of [DETools](https://github.com/eerimoq/detools) for [Zephyr](https://www.zephyrproject.org/). It allows for incremental firmware updates, or [delta updates](https://en.wikipedia.org/wiki/Delta_update), as an alternative to the standard procedure of downloading new firmware in its entirety. 
 
-The program itself is a modification of the Zephyr sample program "Blinky" (which flashes LED 1 on the board), with the added functionality that When a button 1 is pressed, a the program checks for a new patch and, if such a patch exists, performs a firmware upgrade. A developer may easily modify the program code to make the application flash LED 2 instead, create a a patch with this change, download it to the board, push button 1, and confirm whether the upgrade was successful by checking which LED is flashing.
+The program itself is a modification of the Zephyr sample program "Blinky" (which flashes LED 1 on a board) with the added functionality that when button 1 is pressed the program checks for a new patch and, if such a patch exists, performs a firmware upgrade. A developer may easily modify the program code to make the application flash LED 2 instead, create a patch, download it to the board, push button 1, and confirm whether the upgrade was successful by checking which LED is flashing.
 
 ### Key features 
 The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.500.12380/302598), which one may look through for implementation details, descriptions of the algorithms used, methodology, and suggestions for further research, among other things. For a breif overview one may refer to the list below:
@@ -18,7 +18,7 @@ The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.50
 Many resource-constrained IoT units are used in a manner which makes them inaccessible via cable and at the same time unable to receive large amounts of data using radio transmissions. Upgrading firmware is hence difficult or in some cases impossible. Integrating support for delta updates in the unit is a potential solution to this problem, as it significantly reduces the payload during an upgrade scenario. However, as of now there is no open-source solution for delta upgrades in embedded systems. The purpose of the application is to such a solution is achievable and that it causes a significant payload reduction. 
 
 # Environment Setup
-Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html) up to step 3.2 "Get the Zephyr source code". Here you should run the commands below instead of the ones in the guide:
+Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/getting_started/index.html) up to step 3.2 "Get the Zephyr source code". Here one should run the commands below instead of the ones in the guide:
 
     $ git clone https://gitlab.endian.se/thesis-projects/delta-updates-for-embedded-systems.git
     $ cd delta-updates-for-embedded-systems
@@ -29,7 +29,7 @@ Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/ge
 
 Then complete the remaining steps under section 4. 
 
-Finally, we need to install some external development tools. Return to the project folder and run `make tools` to install the needed python packages. Download and install [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download#infotabs) and [J-Link Software](https://www.segger.com/downloads/jlink/) to enable some utilities for flashing and debugging the device.
+Additionally, one will need some external development tools. Return to the project folder and run `make tools` to install the needed python packages. Download and install [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download#infotabs) and [J-Link Software](https://www.segger.com/downloads/jlink/) to enable some utilities for flashing and debugging the device.
 
 # Example Usage
 This small guide features some examples of how to use the program. A good place to start might be to perform them all sequentially. 
@@ -49,12 +49,12 @@ The next step might be to build and flash the firmware.
 When executing the second command one will get a prompt asking if this version should be set as the currently running one, to which you may respond `y`. This functionality exists as some rudimentary way of keeping track of versions when creating a patches. 
 
 ### Modify the program to flash another LED
-In order to have get a patch we need to create a new version of the program, which one easily can create by modifying which LED light is flashing. This is easiest done by opening up `delta-updates-for-embedded-systems/app/src/main.c` in ones editor of choice and replacing `#define LED0_NODE DT_ALIAS(led0)` with `#define LED0_NODE DT_ALIAS(led1)` (or some other LED). Then building with: 
+In order to test the patching algorithm a new version of the program is needed. This is easiest done by modifying which LED light is flashing. This can be done by opening `delta-updates-for-embedded-systems/app/src/main.c` in ones editor of choice and replacing `#define LED0_NODE DT_ALIAS(led0)` with `#define LED0_NODE DT_ALIAS(led1)` (or some other LED). The "new" application can then be built with:
 
     $ make build
 
 ### Create and flash the patch
-Creating a patch requires step 2 and 3 to at some point have been executed, as a "currently running" and a "latest created" version of the software has to have been set. The patch created will contain instructions for to transform the former of these into the later. 
+Creating a patch requires step 2 and 3 to at some point have been completed, as a "currently running" and a "latest created" version of the software has to have been set. The patch created will contain instructions for how to transform the former of these into the later. 
 
 The commands for creating the patch and downloading it the patch partition are: 
 
