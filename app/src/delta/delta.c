@@ -215,7 +215,7 @@ int delta_check_and_apply(struct flash_mem *flash)
 int delta_read_patch_header(struct flash_mem *flash)
 {
 	int header_len, word_len, size;
-	unsigned char *buf_p, *buf_end, buf[header_len];
+	unsigned char *buf_p, *buf_end, buf[HEADER_SIZE];
 	unsigned char word_buf[] = {'N', 'E', 'W', 'P', 'A',
 								'T', 'C', 'H'};
 	unsigned char new_word[] = {'F', 'F', 'F', 'F', 'F',
