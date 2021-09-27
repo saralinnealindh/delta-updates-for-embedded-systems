@@ -1,11 +1,10 @@
 # About
-
 This is a example program showcasing an implementation of [DETools](https://github.com/eerimoq/detools) for [Zephyr](https://www.zephyrproject.org/). It allows for incremental firmware updates, or [delta updates](https://en.wikipedia.org/wiki/Delta_update), as an alternative to the standard procedure of downloading new firmware in its entirety. 
 
 The program itself is a modification of the Zephyr sample program "Blinky" (which flashes LED 1 on the board), with the added functionality that When a button 1 is pressed, a the program checks for a new patch and, if such a patch exists, performs a firmware upgrade. A developer may easily modify the program code to make the application flash LED 2 instead, create a a patch with this change, download it to the board, push button 1, and confirm whether the upgrade was successful by checking which LED is flashing.
 
 ### Key features 
-The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.500.12380/302598), which one may look through for implementation details, descriptions of the algorithms used, methodology, and suggestions for further research, among other things. For a breif overview of some key features one may refer to the list below:
+The program was created for my [bachelor´s thesis](https://hdl.handle.net/20.500.12380/302598), which one may look through for implementation details, descriptions of the algorithms used, methodology, and suggestions for further research, among other things. For a breif overview one may refer to the list below:
 
 * The program is currently hardware specific and assumes the Nordic [nRF52840 DK](https://www.nordicsemi.com/Products/Development-hardware/nrf52840-dk) SoC is used. However, it will likely very easily be ported to other [Zephyr supported boards](https://docs.zephyrproject.org/latest/boards/index.html).
 * Downloading firmware to the device is currently only supported using the USB interface.
@@ -30,7 +29,7 @@ Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/ge
 
 Then complete the remaining steps under section 4. 
 
-Finally, install the tools used in the project. Return to the project folder and run `make tools` to install the needed python packages. Download and install [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download#infotabs) and [J-Link Software](https://www.segger.com/downloads/jlink/), to enable some utilities for flashing and debugging the device.
+Finally, we need to install some external development tools. Return to the project folder and run `make tools` to install the needed python packages. Download and install [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download#infotabs) and [J-Link Software](https://www.segger.com/downloads/jlink/) to enable some utilities for flashing and debugging the device.
 
 # Example Usage
 This small guide features some examples of how to use the program. A good place to start might be to perform them all sequentially. 
@@ -65,6 +64,6 @@ The commands for creating the patch and downloading it the patch partition are:
 After executing the second command one will get a prompt asking if this version should be set as the currently running one. To this one might want to respond `y` if the upgrade was successful or `n` if it was not.
 
 ### Upgrade the firmware
-When the patch is downloaded to the patch partition and the program is flashing LED1 it is time to start the patching process, which one does by clicking button 1. The LED should stop blinking for a few seconds while its creating the new firmware and reboots, and then start up again doing whatever one modified the new program to do. 
+When the patch is downloaded to the patch partition and the program is flashing LED 1 it is time to start the patching process, which one does by clicking button 1. The LED should stop blinking for a few seconds while its creating the new firmware and reboots, and then start up again doing whatever one modified the new program to do. 
 
 
