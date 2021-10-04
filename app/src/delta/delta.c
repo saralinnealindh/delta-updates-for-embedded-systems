@@ -183,12 +183,13 @@ static int delta_init(struct flash_mem *flash)
 
 int delta_check_and_apply(struct flash_mem *flash)
 {
-	int patch_size, ret;
+	uint32_t patch_size; 
+	int ret;
 
-	patch_size = delta_read_patch_header(flash);
+	ret = delta_read_patch_header(flash,&patch_size);
 
-	if (patch_size < 0) {
-		return patch_size;
+	if (ret < 0) {
+		return ret;
 	} else if (patch_size > 0) {
 		ret = delta_init(flash);
 		if (ret) {
@@ -209,12 +210,12 @@ int delta_check_and_apply(struct flash_mem *flash)
 		sys_reboot(SYS_REBOOT_COLD);
 	}
 
-	return 0;
+	return DELTA_OK;
 }
 
-int delta_read_patch_header(struct flash_mem *flash)
+int delta_read_patch_header(struct flash_mem *flash, uint32_t size)
 {
-	unsigned int size, new_patch, reset_msg, patch_header[2];
+	uint32_t new_patch, reset_msg, patch_header[2];
 
 	new_patch = 0x5057454E; // ASCII for "NEWP" signaling new patch
 	reset_msg = 0x0U; // reset "NEWP"
@@ -224,7 +225,7 @@ int delta_read_patch_header(struct flash_mem *flash)
 	}
 
 	if (new_patch!=patch_header[0]) {
-		return -DELTA_OK;
+		return DELTA_OK;
 	}
 
 	size = patch_header[1];
@@ -241,7 +242,7 @@ int delta_read_patch_header(struct flash_mem *flash)
 		return -DELTA_PATCH_HEADER_ERROR;
 	}
 
-	return size;
+	return DELTA_OK;
 }
 
 const char *delta_error_as_string(int error)
