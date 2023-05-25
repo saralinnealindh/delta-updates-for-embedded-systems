@@ -183,10 +183,10 @@ static int delta_init(struct flash_mem *flash)
 
 int delta_check_and_apply(struct flash_mem *flash)
 {
-	uint32_t patch_size; 
+	uint32_t patch_size = 0; 
 	int ret;
 
-	ret = delta_read_patch_header(flash,&patch_size);
+	ret = delta_read_patch_header(flash, &patch_size);
 
 	if (ret < 0) {
 		return ret;
@@ -213,7 +213,7 @@ int delta_check_and_apply(struct flash_mem *flash)
 	return DELTA_OK;
 }
 
-int delta_read_patch_header(struct flash_mem *flash, uint32_t size)
+int delta_read_patch_header(struct flash_mem *flash, uint32_t *size_ptr)
 {
 	uint32_t new_patch, reset_msg, patch_header[2];
 
@@ -228,7 +228,7 @@ int delta_read_patch_header(struct flash_mem *flash, uint32_t size)
 		return DELTA_OK;
 	}
 
-	size = patch_header[1];
+	*size_ptr = patch_header[1];
 
 	if (flash_write_protection_set(flash->device, false)) {
 		return -DELTA_PATCH_HEADER_ERROR;

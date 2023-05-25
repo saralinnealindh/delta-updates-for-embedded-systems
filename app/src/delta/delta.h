@@ -85,7 +85,7 @@ int delta_check_and_apply(struct flash_mem *flash);
  * representing an error, or a positive value (0<)
  * representing the patch size.
  */
-int delta_read_patch_header(struct flash_mem *flash, uint32_t size);
+int delta_read_patch_header(struct flash_mem *flash, uint32_t *size_ptr);
 
 /**
  * Get the error string for given error code.

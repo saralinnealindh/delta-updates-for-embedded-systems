@@ -113,7 +113,8 @@ dump-slot1:
 	$(DUMP_SCRIPT) --start $(SLOT1_OFFSET) --length $(SLOT_SIZE) --file $(SLOT1_PATH)
 
 clean:
-	rm -r -f $(BIN_DIR)
+	rm -rf $(BIN_DIR)
+	rm -rf zephyr/build
 
 tools:
 	@echo "Installing tools..."
