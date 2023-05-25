@@ -7,23 +7,23 @@
 #ifndef DELTA_H
 #define DELTA_H
 
-#include <zephyr.h>
-#include <sys/util.h>
-#include <device.h>
-#include <devicetree.h>
-#include <drivers/flash.h>
-#include <storage/flash_map.h>
-#include <dfu/mcuboot.h>
-#include <power/reboot.h>
+#include <zephyr/sys/util.h>
+#include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/storage/flash_map.h>
+#include <zephyr/dfu/mcuboot.h>
+#include <zephyr/sys/reboot.h>
 #include "../detools/detools.h"
+#include <zephyr/logging/log.h>
 
 /* IMAGE OFFSETS AND SIZES */
-#define PRIMARY_OFFSET FLASH_AREA_OFFSET(image_0)
-#define PRIMARY_SIZE FLASH_AREA_SIZE(image_0)
-#define SECONDARY_OFFSET FLASH_AREA_OFFSET(image_1)
-#define SECONDARY_SIZE FLASH_AREA_SIZE(image_1)
-#define STORAGE_OFFSET FLASH_AREA_OFFSET(storage)
-#define STORAGE_SIZE FLASH_AREA_SIZE(storage)
+#define PRIMARY_OFFSET FIXED_PARTITION_OFFSET(slot0_partition)
+#define PRIMARY_SIZE FIXED_PARTITION_SIZE(slot0_partition)
+#define SECONDARY_OFFSET FIXED_PARTITION_OFFSET(slot1_partition)
+#define SECONDARY_SIZE FIXED_PARTITION_SIZE(slot1_partition)
+#define STORAGE_OFFSET FIXED_PARTITION_OFFSET(storage_partition)
+#define STORAGE_SIZE FIXED_PARTITION_SIZE(storage_partition)
 
 /* PATCH HEADER SIZE */
 #define HEADER_SIZE 0x8
@@ -85,7 +85,7 @@ int delta_check_and_apply(struct flash_mem *flash);
  * representing an error, or a positive value (0<)
  * representing the patch size.
  */
-int delta_read_patch_header(struct flash_mem *flash, uint32_t size);
+int delta_read_patch_header(struct flash_mem *flash, uint32_t *size_ptr);
 
 /**
  * Get the error string for given error code.

@@ -1,9 +1,9 @@
 manifest:
   defaults:
-    remote: app
-
+    remote: zephyr-upstream
+  
   remotes:
-    - name: app
+    - name: zephyr-upstream
       url-base: https://github.com/zephyrproject-rtos
 
   # External projects
@@ -11,36 +11,21 @@ manifest:
   projects:
     - name: cmsis
       path: modules/hal/cmsis
-      revision: 542b2296e6d515b265e25c6b7208e8fea3014f90
+      revision: 74981bf893e8b10931464b9945e2143d99a3f0a3
     - name: hal_nordic
       path: modules/hal/nordic
-      revision: d8a6ea9695ddf792bb18bb6035c13b1daac5d79c
-    - name: lvgl
-      path: modules/lib/gui/lvgl
-      revision: 928b61c7c8ef5f770f10e6fd36d4fea0cf375b5e
-    - name: littlefs
-      path: modules/fs/littlefs
-      revision: 9e4498d1c73009acd84bb36036ee5e2869112a6c
+      revision: 3f7ae2320b6d348898c7b11e956a6e792d0b3724
     - name: mcuboot
-      revision: a5d79cf8ccb2c71e68ef32a71d6a2716e831d12e
       path: bootloader/mcuboot
-    - name: mcumgr
-      revision: 5051f9d900bbb194a23d4ce80f3c6dc6d6780cc2
-      path: modules/lib/mcumgr
+      revision: 750678e33819b95756203e5db1ba827baee35708
     - name: segger
       path: modules/debug/segger
-      revision: 874d9e9696b00c09f9eeefe839028dc25fe44983
-    - name: tinycbor
-      path: modules/lib/tinycbor
-      revision: 40daca97b478989884bffb5226e9ab73ca54b8c4
-    - name: tinycrypt
-      path: modules/crypto/tinycrypt
-      revision: 3e9a49d2672ec01435ffbf0d788db6d95ef28de0
+      revision: e2ff2200556e8a8f962921444275c04971a2bb3d
     - name: mbedtls
-      revision: aef137b1af8aa7a0f43345c82459254b8832262e
       path: modules/crypto/mbedtls
+      revision: 6e166050075688fd3cf3d0cb3fc34a1c52df2496
     - name: zephyr
       west-commands: scripts/west-commands.yml
-      revision: v2.4.0
+      revision: v3.3.0
   self:
     path: app
