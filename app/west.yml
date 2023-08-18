@@ -1,4 +1,7 @@
 manifest:
+  self:
+    path: app
+
   defaults:
     remote: zephyr-upstream
   
@@ -6,26 +9,14 @@ manifest:
     - name: zephyr-upstream
       url-base: https://github.com/zephyrproject-rtos
 
-  # External projects
-  #
   projects:
-    - name: cmsis
-      path: modules/hal/cmsis
-      revision: 74981bf893e8b10931464b9945e2143d99a3f0a3
-    - name: hal_nordic
-      path: modules/hal/nordic
-      revision: 3f7ae2320b6d348898c7b11e956a6e792d0b3724
-    - name: mcuboot
-      path: bootloader/mcuboot
-      revision: 750678e33819b95756203e5db1ba827baee35708
-    - name: segger
-      path: modules/debug/segger
-      revision: e2ff2200556e8a8f962921444275c04971a2bb3d
-    - name: mbedtls
-      path: modules/crypto/mbedtls
-      revision: 6e166050075688fd3cf3d0cb3fc34a1c52df2496
     - name: zephyr
       west-commands: scripts/west-commands.yml
       revision: v3.3.0
-  self:
-    path: app
+      import:
+        name-allowlist:
+          - cmsis
+          - hal_nordic
+          - segger
+          - mbedtls
+          - mcuboot
