@@ -93,7 +93,7 @@ static int config_devices(void)
 	int ret;
 
 	/* setup led */
-	if (!gpio_is_ready_dt(&led)) {
+	if (!device_is_ready(led.port)) {
 		return -1;
 	}
 
@@ -103,7 +103,7 @@ static int config_devices(void)
 	}
 
 	/*setup button*/
-	if (!gpio_is_ready_dt(&button)) {
+	if (!device_is_ready(button.port)) {
 		return -1;
 	}
 
