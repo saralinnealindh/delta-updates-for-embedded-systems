@@ -115,6 +115,7 @@ dump-slot1:
 clean:
 	rm -r -f $(BIN_DIR)
 	rm -r -f zephyr/build
+	rm -r -f $(BOOT_DIR)/build
 
 tools:
 	@echo "Installing tools..."
