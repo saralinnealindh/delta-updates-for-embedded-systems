@@ -8,7 +8,7 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/drivers/gpio.h>
-#include "delta/delta.h"
+#include "delta.h"
 
 /* BUTTON */
 #define SW0_NODE	DT_ALIAS(sw0)

@@ -23,12 +23,12 @@ Follow Zephyr's [Getting Started Guide](https://docs.zephyrproject.org/latest/ge
 
     $ git clone https://gitlab.endian.se/thesis-projects/delta-updates-for-embedded-systems.git
     $ cd delta-updates-for-embedded-systems
-    $ west init -l app/
+    $ west init -l
     $ west update
     $ west zephyr-export
     $ pip3 install --user -r ./zephyr/scripts/requirements.txt
 
-Then complete the remaining steps under section 4. 
+Then complete the remaining steps under section 4.
 
 Additionally, one will need some external development tools. Return to the project folder and run `make tools` to install the needed python packages. Download and install [nRF Command Line Tools](https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download#infotabs) and [J-Link Software](https://www.segger.com/downloads/jlink/) to enable some utilities for flashing and debugging the device.
 

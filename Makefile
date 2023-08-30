@@ -11,9 +11,10 @@ MAX_PATCH_SIZE := 0x6000
 PATCH_HEADER_SIZE := 0x8 
 
 #relevant directories that the user might have to update
-BOOT_DIR := bootloader/mcuboot/boot/zephyr#bootloader image location
-BUILD_DIR := zephyr/build#zephyr build directory
-KEY_PATH := bootloader/mcuboot/root-rsa-2048.pem#key for signing images
+BOOT_DIR := ../bootloader/mcuboot/boot/zephyr#bootloader image location
+BUILD_DIR := ../zephyr/build#zephyr build directory
+SCRIPT_DIR := ../dfu-bsdiff-zephyr/scripts
+KEY_PATH := ../bootloader/mcuboot/root-rsa-2048.pem#key for signing images
 
 #Names of generated folders and files (can be changed to whatever)
 BIN_DIR := binaries
@@ -34,9 +35,9 @@ BUILD_APP := west build -p auto -b $(BOARD) -d $(BUILD_DIR)
 SIGN := west sign -t imgtool -d $(BUILD_DIR)
 IMGTOOL_SETTINGS := --version 1.0 --header-size $(HEADER_SIZE) \
                     --slot-size $(SLOT_SIZE) --align 4 --key $(KEY_PATH)
-PAD_SCRIPT := $(PY) scripts/pad_patch.py
-DUMP_SCRIPT := $(PY) scripts/jflashrw.py read
-SET_SCRIPT := $(PY) scripts/set_current.py 
+PAD_SCRIPT := $(PY) $(SCRIPT_DIR)/pad_patch.py
+DUMP_SCRIPT := $(PY) $(SCRIPT_DIR)/jflashrw.py read
+SET_SCRIPT := $(PY) $(SCRIPT_DIR)/set_current.py 
 
 all: build-boot flash-boot build flash-image
 
