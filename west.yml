@@ -1,0 +1,26 @@
+manifest:
+  self:
+    path: app
+
+  defaults:
+    remote: zephyr-upstream
+  
+  remotes:
+    - name: zephyr-upstream
+      url-base: https://github.com/zephyrproject-rtos
+    - name: linnea-github
+      url-base: https://github.com/saralinnealindh
+
+  projects:
+    - name: zephyr
+      west-commands: scripts/west-commands.yml
+      revision: v3.3.0
+      import:
+        name-allowlist:
+          - cmsis
+          - hal_nordic
+          - segger
+          - mbedtls
+          - mcuboot
+    - name: dfu-bsdiff-zephyr
+      remote: linnea-github

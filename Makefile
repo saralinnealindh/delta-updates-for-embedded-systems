@@ -12,7 +12,7 @@ PATCH_HEADER_SIZE := 0x8
 
 #relevant directories that the user might have to update
 BOOT_DIR := ../bootloader/mcuboot/boot/zephyr#bootloader image location
-BUILD_DIR := ../zephyr/build#zephyr build directory
+BUILD_DIR := app/build#zephyr build directory
 SCRIPT_DIR := ../dfu-bsdiff-zephyr/scripts
 KEY_PATH := ../bootloader/mcuboot/root-rsa-2048.pem#key for signing images
 
@@ -115,7 +115,7 @@ dump-slot1:
 
 clean:
 	rm -r -f $(BOOT_DIR)/build
-	rm -r -f zephyr/build
+	rm -r -f $(BUILD_DIR)
 
 tools:
 	@echo "Installing tools..."
